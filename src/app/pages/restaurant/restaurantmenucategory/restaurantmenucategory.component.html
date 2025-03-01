@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <app-page-title title="MENU CATEGORY" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-sm-4">
+                            <div class="search-box me-2 mb-2 d-inline-block">
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" placeholder="Search..."
+                                        [(ngModel)]="term" />
+                                    <i class="bx bx-search-alt search-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="text-sm-end">
+                                <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                                    (click)="openModal(content)">
+                                    <i class="mdi mdi-plus me-1"></i> New Category
+                                </button>
+                            </div>
+                        </div>
+                        <!-- end col-->
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap">
+                                <thead>
+                                    <tr>
+                                        <!-- <th>#</th> -->
+                                        <th>Code</th>
+                                        <th>Category Name</th>
+                                        
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let _franchisecategory of menuCategoryArray  | filter:term ;let i = index;">
+                                        <td>{{_franchisecategory.restaurantmenucategorycode}}</td>
+                                        <td>
+                                            <p class="mb-1">{{_franchisecategory.restaurantmenucategoryname}}</p>
+                                        </td>
+                                        <td>
+                                            <div ngbDropdown placement="bottom-left">
+                                                <i class="mdi mdi-dots-vertical dropdown-toggle" ngbDropdownToggle
+                                                    data-toggle="dropdown" aria-expanded="true"></i>
+                                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                    <!-- <a class="dropdown-item" href="javascript: void(0);"><i class="mdi mdi-plus"></i>Add</a> -->
+                                                    <a class="dropdown-item" (click)="dataToEdit(i);openModal(content);"
+                                                        href="javascript: void(0);"><i
+                                                            class="mdi mdi-account-edit"></i>Edit</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title mt-0">{{cardTitle}}</h4>
+        <button type="button" class="btn-close" aria-hidden="true"
+            (click)="modal.dismiss('Cross click');resetData();"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="saveRestaurantCategory()" [formGroup]="formData">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Category Name</label>
+                                <input class="form-control" placeholder="Enter Category Name" type="text"
+                                    name="restaurantmenucategoryname" autocomplete="off" formControlName="restaurantmenucategoryname"
+                                    [ngClass]="{'is-invalid': submitted && form.restaurantmenucategoryname.errors}" />
+                                <div *ngIf="submitted && form.restaurantmenucategoryname.errors" class="invalid-feedback">
+                                    <span *ngIf="form.restaurantmenucategoryname.errors.required">franchisecategory is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Category Description</label>
+                                <input class="form-control" placeholder="Enter Category Description" type="text"
+                                    name="restaurantmenucategorydescription" autocomplete="off" formControlName="restaurantmenucategorydescription"
+                                    [ngClass]="{'is-invalid': submitted && form.restaurantmenucategorydescription.errors}" />
+                                <div *ngIf="submitted && form.restaurantmenucategorydescription.errors" class="invalid-feedback">
+                                    <span *ngIf="form.restaurantmenucategorydescription.errors.required">franchisecategory is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                    <button type="button" class="btn btn-success  mb-4 mr-4" (click)="saveRestaurantCategory();">
+                        {{valButtonText}}
+                    </button>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>

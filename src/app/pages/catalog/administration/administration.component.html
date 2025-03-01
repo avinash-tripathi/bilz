@@ -1,0 +1,209 @@
+<div class="container-fluid">
+  <app-page-title title="ADMINISTRATION" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end" *ngIf="this.userData['role']!='admin'">
+               <span  class="badge badge-pill badge-soft-danger font-size-11">
+               Data will be available only for Admin.
+               </span>
+              </div>
+            </div>
+            <!-- end col-->
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <!-- <th>#</th> -->
+                    <th>Code</th>
+                    <th>Customer Name</th>
+                    <th>Franchise Code</th>
+                   
+                    
+                    <th>Purchase Date</th>
+                    <th>Status</th>
+                    
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody class="card-body">
+                <ng-container *ngFor="let _purchase of purchaseArray  | filter:term ;let i = index;">
+                <tr (click)="hideShow(i)" [ngClass]="{'card-white':show==i}" >
+                    <td class="pointer">
+                                    <div class="d-flex">
+                                        <div class="p-2 my-auto">
+                                            <i class="bx bx-chevron-right font-size"></i>
+                                        </div>
+                                        <div class="ml-auto p-2" >
+                                         <div>
+                                         
+                                         {{_purchase.purchasecode}}</div>
+                                        </div>
+                                    </div>
+                    </td>
+                    <td >
+                     <div class="d-flex">
+                                        
+                                        <div class="ml-auto p-2" >
+                                            <div>{{_purchase.customername}}</div>
+                                        </div>
+                                    </div>
+                    </td> 
+                    <td class="pointer">
+                      <div class="ml-auto p-2" >
+                      <p class="mb-1">{{_purchase.franchisename}}</p>
+                      <p class="mb-0">{{_purchase.franchisecode}}</p>
+                                           
+                                        </div>
+                    </td>
+                   <td class="pointer">
+                   <div class="ml-auto p-2" >
+                                            <div>{{_purchase.purchasedate | date:'mediumDate'}}</div>
+                                        </div>
+                   </td>
+                    <td class="pointer">
+                    <span *ngIf="_purchase.zipstatus=='processed'" class="badge badge-pill badge-soft-success font-size-11">
+                    {{_purchase.zipstatus }}
+                    </span>
+                    <span *ngIf="_purchase.zipstatus!='processed'" class="badge badge-pill badge-soft-danger font-size-11">
+                    {{_purchase.zipstatus }}
+                    </span>
+                    </td>
+                    <td>
+                      <div *ngIf="_purchase.zipstatus=='pending'" ngbDropdown placement="bottom-left">
+                        <i class="mdi mdi-dots-vertical dropdown-toggle" ngbDropdownToggle data-toggle="dropdown"
+                          aria-expanded="true"></i>
+                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                          <!-- <a class="dropdown-item" href="javascript: void(0);"><i class="mdi mdi-plus"></i>Add</a> -->
+                          <a class="dropdown-item" (click)="dataToEdit(_purchase);openModal(content);" 
+                           
+                            href="javascript: void(0);">
+                            <i class="mdi mdi-account-edit"></i>Upload</a>
+                            
+                        </div>
+                      </div>
+                    </td>
+                    
+                  </tr>
+                  <tr *ngIf="show==i" [ngClass]="{'card-white':show==i}">
+                            <td colspan="4">
+                                <div>
+                                    <h6 class=" text-primary">
+                                        <span class="">
+                                            Product Detail
+                                        </span>
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div class="row border-solid">
+                                                <ng-container *ngFor="let _product of _purchase.products; let j = index">
+                                                    <div class="col-md-4">
+                                                        <div class="py-1">
+                                                            <div>
+                                                                {{_product.productname}} &nbsp;{{_product.productcode}} 
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="py-1">
+                                                            <div class="float-end bold font-w">
+                                                               Cost to Customer<span>:</span> {{_product.costtocustomer}}
+                                                            </div>
+                                                            <div class="float-end bold font-w">
+                                                               Cost to Franchise<span>:</span> {{_product.costtofranchise}}
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                       <a href="{{_ftpPath}}{{_purchase.purchasedateinnumber}}/{{_purchase.zipfilename}}">
+                                                      <button class="btn btn-link">  
+                                                      <span class="fa fa-download"> {{_purchase.zipfilename}}</span>  
+                                                      </button>  
+                                                    </a> 
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </td>
+                        </tr> 
+                  </ng-container>  
+                
+                  
+                </tbody>
+              </table>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title mt-0">{{cardTitle}}</h4>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click');resetData();"></button>
+  </div>
+  <div class="modal-body">
+    <form  [formGroup]="formData">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="float-end bold font-w">
+                    Franchise Code <span>:</span> {{_selectedFranchiseCode}}
+                  </div>
+                  <div class="float-end bold font-w">
+                    Purchase Code <span>:</span> {{_selectedPurchaseCode}}
+                  </div>
+              </div>
+              <div class="col-md-12">
+                  <div class="float-end bold font-w">
+                    Customer Name <span>:</span> {{_selectedCustomerName}}
+                  </div>
+                  
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                        <dropzone  class="dropzone" message="Select Zip file. Please ensure file size not exceed above 5MB." 
+                            name="dropimage" 
+                            (error)="onUploadError($event)"
+                            (success)="onUploadSuccess($event)"
+                            [ngClass]="{'is-invalid': submitted && _selectedPurchaseCode=='' }">
+                         </dropzone>
+                         <div *ngIf="_selectedPurchaseCode==''" style="color:#ff0000">
+                            <span>Invalid State to Upload File.. No purchase found.</span>
+                                                
+                        </div>
+              </div>
+            </div>
+
+              <button type="button" class="btn btn-success  mb-4 mr-4" (click)="replyOnPurchase();">
+               {{valButtonText}}
+              </button>
+           
+          
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

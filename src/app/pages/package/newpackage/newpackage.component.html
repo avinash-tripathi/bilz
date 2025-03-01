@@ -1,0 +1,223 @@
+<div class="container-fluid">
+    <app-page-title title="ADD PACKAGE" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-sm-4">
+                <div class="search-box me-2 mb-2 d-inline-block">
+                  <div class="position-relative">
+                    <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                    <i class="bx bx-search-alt search-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <div class="text-sm-end">
+                  <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                    (click)="reset();openModal(content);">
+                    <i class="mdi mdi-plus me-1"></i> New Package
+                  </button>
+                </div>
+              </div>
+              <!-- end col-->
+            </div>
+            <div class="table-responsive">
+              <table class="table table-sm mb-0">
+                <thead  class="table-light">
+                  <tr>
+                    <th>Package Code</th>
+                    <th>Package Name</th>
+                    <th>Package Amount</th>
+                    
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody card-body ng-star-inserted>
+                  <ng-container 
+                    *ngFor="let _data of packageData  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                    <tr bx bx-chevron-right font-size (click)="hideShow(i)">
+                      <td class="pointer">{{_data.packagecode}}</td>
+                     
+                      <td>{{_data.packagename}}</td>
+                      <td>{{_data.packageamount}}</td>
+                      
+                      <td>
+                        <div class="dropdown" ngbDropdown placement="bottom-right">
+                          <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                            ngbDropdownToggle aria-expanded="True">
+                            <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                            <li><a href="javascript: void(0);" (click)="dataToEdit(_data);openModal(content);"
+                                class="dropdown-item"><i class="fas fa-pencil-alt text-success me-1"></i>
+                                Edit</a></li>
+                          
+                            <li><a href="javascript: void(0);" (click)="deletePackage(_data);" class="dropdown-item text-danger">
+                                 <i class="mdi mdi-delete me-1"></i>
+                                Delete</a></li>    
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="show==i" class="sub-table no-bg">
+                      <div class="card">
+                        <div class="card-body">
+                          <td colspan="2" class="p-0">
+                            <table class="table mb-0 table-striped">
+                              <thead class="table-light">
+                                <tr>
+                                  <th>Feature Code</th>
+                                  <th>Feature Type</th>
+                                  <th>Feature Name</th>
+                                  <th>Quantity</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let _room of _data.packagefeatures; let i = index">
+                                  <td>{{_room.featurecode}}</td>
+                                  <td>{{_room.featuretype}}</td>
+                                  <td>{{_room.featurename}}</td>
+                                  <td>{{_room.quantity}}</td>
+                                  
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </div>
+                      </div>
+                     </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <!-- pagination -->
+            <ngb-pagination *ngIf="packageData?.length>1" [collectionSize]="packageData?.length" [(page)]="currentpage"
+              [pageSize]="pageSize" class="pagination pagination-rounded justify-content-end mb-2"
+              aria-label="Default pagination">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end row -->
+  </div>
+  
+  <!-- Standard Modal -->
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">{{cardTitle}}</h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="savepackage()" [formGroup]="formData">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="control-label">Package Name</label>
+              <input class="form-control" placeholder="Enter Package Name" type="text" name="title" autocomplete="off"
+                formControlName="packagename" [ngClass]="{'is-invalid': submitted && form.packagename.errors}" />
+              <div *ngIf="submitted && form.packagename.errors" class="invalid-feedback">
+                <span *ngIf="form.packagename.errors.required">Package Name is required.</span>
+  
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="control-label">Package Amount</label>
+              <input class="form-control" placeholder="Enter Package Amount" type="number" name="packageamount"
+                autocomplete="off" formControlName="packageamount"
+                [ngClass]="{'is-invalid': submitted && form.packageamount.errors}" />
+              <div *ngIf="submitted && form.packageamount.errors" class="invalid-feedback">
+                <span *ngIf="form.packageamount.errors.required">Package Amount is required.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+<!-- commented out below mention row only to suggest client that  in order to assign room , create invoice via room booking. -->
+
+        <div class="row" *ngIf="false">
+            <div class="col-3">
+              <div class="mb-3">
+                <label class="control-label">Room Category</label>
+                <select  class="form-select" id="roomcategory"
+                  formControlName="roomcategory" [ngClass]="{'is-invalid': submitted && form.roomcategory.errors}">
+                  <option [ngValue]="null" selected disabled>Select option</option>
+                  <option *ngFor="let _data of roomCategoryArray ;let i = index;" [value]="_data.roomcategorycode">
+                    {{_data.roomcategoryname}}</option>
+                </select>
+    
+                <div *ngIf="submitted && form.roomcategory.errors" class="invalid-feedback">
+                  <span *ngIf="form.roomcategory.errors.required">Roomcategory is required.</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+                <div class="mb-3">
+                    <label class="control-label">Quantity</label>
+                    <input class="form-control" placeholder="Enter Quantity" type="number" name="quantity"
+                      autocomplete="off" formControlName="quantity"
+                      [ngClass]="{'is-invalid': submitted && form.quantity.errors}" />
+                    <div *ngIf="submitted && form.quantity.errors" class="invalid-feedback">
+                      <span *ngIf="form.quantity.errors.required">Quantity is required.</span>
+                    </div>
+                  </div>
+              </div>
+    
+    
+        </div>
+        <div class="row">
+            <div class="col-6">
+              <div class="mb-3" >
+                <div class="form-control">
+                <!-- <label formArrayName="chkAmenities" *ngFor="let chk of formData.get('chkAmenities')['controls']; let i = index"> -->
+                    <!-- <input  -->
+                     <!-- style="margin-left:5px" class="form-check-input" type="checkbox" -->
+                     <!-- [formControlName]="i" (change)="onCheckChange($event,amenityData[i])"  -->
+                     <!-- [ngClass]="{'is-invalid': submitted && form.chkAmenities.errors}"> -->
+                    <!-- {{amenityData[i].amenityname}} -->
+                    <!--  -->
+                  <!-- </label> -->
+                  <span *ngFor="let chk of amenityData; let i=index">
+                    <input   style="margin-left:5px" class="form-check-input" type="checkbox"
+                    (change)="onChange($event)"
+                   
+                    [checked]="chk.status"
+                    [value]="chk.amenitycode"
+                    >
+                    {{chk.amenityname}}
+                     </span>
+                  
+                </div>
+              </div>
+              <!-- <div class="mb-3" *ngIf="!isNewEntry"> -->
+                <!-- <div class="form-control"> -->
+                  <!-- <div class="row"  *ngFor="let chk of formData.get('chkAmenities')['controls']; let i = index"> -->
+                    <!-- {{amenityData[i].amenityname}}  -->
+                  <!-- </div> -->
+                <!-- </div> -->
+              <!-- </div> -->
+            </div>
+           
+        </div>
+  
+        <div class="row">
+          <div class="col-6">
+            <button type="submit" class="btn btn-success" id="btn-save-event">
+              Save
+            </button>
+          </div>
+        </div>
+  
+      </form>
+    </div>
+  </ng-template>
+  
+ 

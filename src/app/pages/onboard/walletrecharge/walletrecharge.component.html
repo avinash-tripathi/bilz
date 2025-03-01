@@ -1,0 +1,83 @@
+<div class="container-fluid">
+    <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Add Unit</h4>
+                        <div>
+                            <p class="text-muted mb-2"><i class="mdi mdi-wallet me-1"></i> Wallet Balance</p>
+                            <h5>{{_currentBalance}} Unit</h5>
+                        </div>
+                        <label>Instant Recharge :</label>
+                        <form  [formGroup]="formData">
+                            <div class="row">
+                                                <!-- <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <label class="input-group-text">Transaction Number</label>
+                                                    </div>
+                                                    <input type="text" formControlName="transactionnumber" class="form-control"
+                                                    [ngClass]="{'is-invalid': submitted && form.transactionnumber.errors}"
+                                                    >
+                                                    
+                                                    <div *ngIf="submitted && form.transactionnumber.errors" class="invalid-feedback">
+                                                        <span *ngIf="form.transactionnumber.errors.required">Transaction Number is required.</span>
+                                                        
+                                                    </div>
+
+                                                </div> -->
+
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <label class="input-group-text">Amount</label>
+                                                    </div>
+                                                    <input type="text" formControlName="payeeamount" class="form-control"
+                                                    [ngClass]="{'is-invalid': submitted && form.payeeamount.errors}"
+                                                    >
+                                                    <div class="input-group-append">
+                                                        <label class="input-group-text">Unit</label>
+                                                    </div>
+                                                    <div *ngIf="submitted && form.payeeamount.errors" class="invalid-feedback">
+                                                        <span *ngIf="form.payeeamount.errors.required">Unit is required.</span>
+                                                        <span *ngIf="form.payeeamount.errors.pattern">Please enter numeric digits only.</span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <label class="input-group-text">Name</label>
+                                                    </div>
+                                                    <input [readOnly]="true" type="text" formControlName="payeename" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeename.errors}"
+                                                    >
+                                                    
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <label class="input-group-text">Email</label>
+                                                    </div>
+                                                    <input [readOnly]="true" type="text" formControlName="payeeemail" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeeemail.errors}"
+                                                    >
+                                                    
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <label class="input-group-text">Mobile</label>
+                                                    </div>
+                                                    <input [readOnly]="true" type="text" formControlName="payeephone" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeephone.errors}">
+                                                    
+                                                </div>
+
+                                                <div class="text-center">
+                                                <button type="button" (click)="rechargeWallet()" 
+                                                [disabled]="disablePaymentButton"
+                                                class="btn btn-success w-md">Proceed to Recharge
+                                                </button>
+                                                </div>
+                                            
+
+                            </div>
+                            </form>
+                </div>
+            </div>
+            </div>
+    </div>
+</div>

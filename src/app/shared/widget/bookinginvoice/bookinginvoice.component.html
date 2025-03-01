@@ -1,0 +1,364 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header card-header-primary">
+          <h4 class="card-title ">Invoice</h4>
+          <i class="fa fa-print pull-right" aria-hidden="true" style="font-size:24px;color:black"
+            (click)="downloadAsPDF()"></i>
+
+
+        </div>
+
+        <div class="card-body" id="contentToConvert">
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center">
+              <h3 class="card-title">Tax Invoice</h3>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+
+          <div class="row ">
+            <div class="col-md-2">
+              <div *ngIf="userData['distributioncode']=='DC-20221226182131773'" class="mb-2" style="background-color: rgb(185, 8, 8);">
+                <img  src="assets/images/logo/VVHotel.png" alt="logo" height="100" />
+              </div>
+              <div *ngIf="userData['distributioncode']!='DC-20221226182131773'" class="mb-2" >
+                <img  src="assets/images/therajwada.jpeg" alt="logo" height="100" />
+              </div>
+
+
+            </div>
+            <div class="col-md-5">
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">Booking From:</div>
+                <div class="col-md-7 tableRow">{{_purchase.bookingdatefrom |date:'mediumDate'}} </div>
+              </div>
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">Booking To:</div>
+                <div class="col-md-7 tableRow">{{_purchase.bookingdateto |date:'mediumDate'}}</div>
+              </div>
+
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">Check-In:</div>
+                <div class="col-md-7 tableRow">{{_purchase.checkin |date:'medium'}}</div>
+              </div>
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">Check-Out:</div>
+                <div class="col-md-7 tableRow">{{_purchase.checkout |date:'medium'}}</div>
+              </div>
+
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">No of Guest:</div>
+                <div class="col-md-7 tableRow"> {{_purchase.noofguest }}</div>
+              </div>
+              <div class="row text-sm">
+                <div class="col-md-5 text-end tableRow">No of Days:</div>
+                <div class="col-md-7 tableRow"> {{_totaldays }}</div>
+              </div>
+
+            </div>
+            <div class="col-md-5 text-sm tableRow text-end">
+
+              <div class="row text-sm" *ngIf="_purchase?.invoiceno==''">
+                <div class="col-md-5 text-end tableRow">Booking No:</div>
+                <div class="col-md-7 tableRow"> {{_purchase?.bookingcode}}</div>
+              </div>
+
+              <div class="row text-sm" *ngIf="_purchase?.invoiceno!=''">
+                <div class="col-md-5 text-end tableRow">Invoice No:</div>
+                <div class="col-md-7 tableRow">{{_purchase?.invoiceno.trim()}}</div>
+              </div>
+
+
+              <div class="row text-sm" *ngIf="_purchase?.invoiceno!=''">
+                <div class="col-md-5 text-end tableRow">Invoice Date:</div>
+                <div class="col-md-7 tableRow">{{_purchase.checkout |date:'dd/MM/yyyy'}}</div>
+              </div>
+
+
+            </div>
+
+          </div>
+
+
+          <!-- <div class="row ">
+            <div class="col-md-6 text-sm allBorder "><strong>Billed To:</strong></div>
+            <div class="col-md-6 text-sm allBorder "><strong>Billed From:</strong></div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Name</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">{{_purchase?.customername}}</div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Name</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">VIJAY VILAS</div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>GSTIN</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">{{_purchase?.customergstnumber}}</div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>GSTIN</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">09AAPFT4670G1ZO</div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>ID</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">{{_purchase?.customerid}}: {{_purchase?.customeridvalue}}</div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>ID</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">PAN: AAPFT4670G</div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Contact No</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">{{_purchase?.customercontactno}}</div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Contact No</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">8858502418</div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Address</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">{{_purchase?.customeraddress}}</div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Address</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">G.T Road Sarai Mira, Kannauj UP</div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Email</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow"></div>
+            <div class="col-md-2 text-sm allBorder tableRow"><strong>Email</strong></div>
+            <div class="col-md-4 text-sm text-end allBorder tableRow">vijayvilaskannauj@gmail.com</div>
+          </div> -->
+
+
+          <div class="row">
+            <div class="col-lg-6 text-sm">
+              <table class="table table-sm  table-hover table-bordered">
+                <thead>
+                  <tr><th colspan="2" class="text-center">Billed To</th> </tr> 
+                </thead>
+                <tbody>
+                  <tr class="tableRow">
+                    <td><strong>Name</strong></td>
+                    <td class="text-end">{{_purchase?.customername}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>GSTIN</strong></td>
+                    <td class="text-end">{{_purchase?.customergstnumber}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Company</strong></td>
+                    <td class="text-end">{{_purchase?.companyname}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>ID</strong></td>
+                    <td class="text-end">{{_purchase?.customerid}}: {{_purchase?.customeridvalue}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td style="width: 80px;"><strong>Contact No</strong></td>
+                    <td class="text-end">{{_purchase?.customercontactno}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Email</strong></td>
+                    <td class="text-end"></td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Address</strong></td>
+                    <td class="text-end">{{_purchase?.customeraddress}}</td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-6 text-sm">
+              <table class="table table-sm table-hover table-bordered">
+                <thead>
+                  <tr><th colspan="2" class="text-center">Billed From</th> </tr> 
+                </thead>
+                
+                <tbody>
+                  <tr class="tableRow">
+                    <td><strong>Name</strong></td>
+                    <td class="text-end">{{distributionData.distributionname}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>GSTIN</strong></td>
+                    <td class="text-end">{{distributionData.vatnumber}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Company</strong></td>
+                    <td class="text-end"></td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>ID</strong></td>
+                    <td class="text-end">GSTIN: {{distributionData.vatnumber}}</td>
+                  </tr>
+                  
+                  <tr class="tableRow">
+                    <td style="width: 80px;"><strong>Contact No</strong></td>
+                    <td class="text-end">{{distributionData.phone}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Email</strong></td>
+                    <td class="text-end">{{distributionData.email}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td><strong>Address</strong></td>
+                    <td class="text-end">{{distributionData.street1}} {{distributionData.street2}}</td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+              <thead>
+                <tr class="tableRow">
+                  <th style="width: 50px;">No.</th>
+                  <th style="width: 160px;">Item</th>
+                  <th style="width: 60px;">Category</th>
+                  <th style="width: 60px;">HSN</th>
+                  <th *ngIf="_purchase.featuretype=='Package'" style="width: 50px;">QTY</th>
+                  <th style="width: 50px;">GST(%)</th>
+                  <th style="width: 70px;">Discount(%)</th>
+                  <th style="width: 70px;">Rate(INR)</th>
+                  <th *ngIf="_purchase.featuretype=='Room'" style="width: 40px;">Days</th>
+                  <th class="text-end">Sub Total</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="_purchase.featuretype=='Room'">
+                <tr class="tableRow" *ngFor="let _product of _purchase.rooms ;let i = index;">
+                  <td>{{i+1}}</td>
+                  <td>{{_product.roomname}}</td>
+                  <td>{{_product.roomcategoryname}}</td>
+                  <td>996311</td>
+                  <td>{{_product.gst}}%</td>
+                  <td>{{_purchase.discountpercent}}%</td>
+                  <td>{{_product.roomrate}}</td>
+                  <td>{{_totaldays}}</td>
+                  <td class="text-end">{{_totaldays*((_product.roomrate
+                    -_purchase.discountpercent*(0.01)*(_product.roomrate)) +
+                    (_product.roomrate -_purchase.discountpercent*(0.01)*(_product.roomrate))*_product.gst*(0.01)) |
+                    currency :'INR':'symbol':'1.2-2' }}</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="_purchase.featuretype=='Package'">
+                <tr class="tableRow" *ngFor="let _product of _purchase.packageamenities ;let i = index;">
+                  <td>{{i+1}}</td>
+                  <td>{{_purchase.packagename}}/{{_product.amenityname}}</td>
+                  <td>Package</td>
+                  <td>{{_product.hsncode}}</td>
+                  <td>{{_product.quantity}}</td>
+                  <td>{{_product.tax}}</td>
+                  <td>{{_purchase.discountpercent}}%</td>
+                  <td>{{_product.amenityrate}}</td>
+
+                  <td class="text-end">
+                    {{((_product.amenityrate*_product.quantity-_purchase.discountpercent*(0.01)*(_product.amenityrate*_product.quantity))
+                    +
+                    (_product.amenityrate*_product.quantity
+                    -_purchase.discountpercent*(0.01)*(_product.amenityrate*_product.quantity))*_product.tax*(0.01)) |
+                    currency :'INR':'symbol':'1.2-2' }}</td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <img src="{{ 'assets/images/' + userData['distributioncode'] + 'qrcode.png' }}" alt="" height="120" />
+
+              <div class="table-responsive">
+                <table class="table table-sm">
+                  <tbody>
+                    <tr class="tableRow">
+                      <td class="border-0 text-end"><strong>Bank:</strong></td>
+                      <td class="border-0 text-end">Indian Bank</td>
+                    </tr>
+                    <tr class="tableRow">
+                      <td class="border-0 text-end"><strong>Account No:</strong></td>
+                      <td class="border-0 text-end">7478900892</td>
+                    </tr>
+                    <tr class="tableRow">
+                      <td class="border-0 text-end"><strong>IFSC Code:</strong></td>
+                      <td class="border-0 text-end">IDIB000H562</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div class="col-md-9 table-responsive">
+              <table class="table table-sm table-hover table-bordered">
+                <tbody>
+                  <tr class="tableRow">
+                    <td class="text-end"><strong>Amount</strong></td>
+                    <td class="border-0 text-end">{{_subtotalCost | currency :'INR':'symbol':'1.2-2'}}</td>
+                  </tr>
+                  <tr class="tableRow">
+                    <td class="text-end"><strong>Advance</strong></td>
+                    <td class="border-0 text-end">{{_purchase.bookingamount | currency :'INR':'symbol':'1.2-2'}}</td>
+                  </tr>
+
+                  <tr *ngIf="interState" class="tableRow">
+                    <td class="border-0 text-end">
+                      <strong>SGST</strong>
+                    </td>
+                    <td class="text-end">{{_sgsttotal | currency :'INR':'symbol':'1.2-2'}}</td>
+                    <td class="text-end"></td>
+                  </tr>
+                  <tr *ngIf="interState" class="tableRow">
+                    <td class="text-end">
+                      <strong>CGST</strong>
+                    </td>
+                    <td class="text-end">{{_cgsttotal | currency :'INR':'symbol':'1.2-2'}}</td>
+                    <td class="text-end"></td>
+                  </tr>
+                  <tr *ngIf="!interState" class="tableRow">
+                    <td class="text-end">
+                      <strong>IGST</strong>
+                    </td>
+                    <td class="text-end">{{_sgsttotal + _cgsttotal | currency :'INR':'symbol':'1.2-2'}}</td>
+                    <td class="text-end"></td>
+                  </tr>
+
+
+                  <tr class="tableRow">
+                    <td class="text-end">
+                      <strong>Payable Amount</strong>
+                    </td>
+                    <td class="text-end">
+                      <strong>{{_totalCost | currency :'INR':'symbol':'1.2-2'}} </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="tableCol text-end">PLEASE RETURN YOUR KEY ON DEPARTURE, CHECK OUT TIME 11:00 AM</div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm mt-4">
+              <thead>
+                <tr class="tableRow ">
+                  <th style="width: 150px;">Cashier Signature</th>
+                  <th class="text-end">Guest Signature</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bottomNote">
+                  <td class="border-0"></td>
+                  <td class="border-0 text-end">I Agree that I am responsible for the full payment of the bill in the
+                    event it is not paid by the company, organisation or person indicated.</td>
+                </tr>
+                <tr class="bottomNote">
+                  <td class="border-0"></td>
+                  <td class="border-0 text-end">All dispute are subject to Lucknow Juridiction.</td>
+                </tr>
+
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+
+</div> <!-- container-fluid -->

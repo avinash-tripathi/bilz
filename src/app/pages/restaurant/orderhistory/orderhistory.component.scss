@@ -1,0 +1,68 @@
+.border-color{
+    border: 1px solid #ced4da
+}
+.color-green{
+    border: 2px solid green
+}
+.border-right{
+    border-right: 1px solid #ced4da
+}
+.border-left{
+    border-left: 1px solid #ced4da
+}
+
+.active-color{
+    color: #fff;
+    background-color: #556ee6;
+}
+.set-bg{
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.border-solid{
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+.border-solid-bottom{
+    div:first-child{
+        border: none;
+    }
+}
+.card-white{
+    background-color: #fff;
+    box-shadow: 0 0.75rem 1.5rem rgb(18 38 63 / 3%);
+}
+.font-size{
+    font-size: 15px;
+}
+.font-w{
+    font-weight: 600;
+}
+.border-bottom-bold{
+    border-bottom: 2px solid #34c38f;
+}
+.card-white{
+    tr{
+        // cursor: pointer;
+        // background-color: #ecf7ff;
+        border-left: 3px solid #34c38f;
+    }
+}
+
+@media print {
+	.no-printme  {
+		display: none;
+	}
+	.printme  {
+		display: block;
+	}
+}
+.border-dot{
+    border: dashed 1px #000;
+  }
+  ::ng-deep.modal-content{
+      border: none;
+  }

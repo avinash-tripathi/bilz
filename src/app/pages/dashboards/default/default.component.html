@@ -1,0 +1,243 @@
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <h4 class="mb-0 font-size-18">Dashboard</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item active">Welcome to Dashboard</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card overflow-hidden">
+                <div class="bg-primary bg-soft">
+                    <div class="row">
+                        <div class="col-7">
+                            <div class="text-primary p-3">
+                                <h4 class="text-primary">Welcome!</h4>
+                                <p>{{userData['distributionname']}} Dashboard</p>
+                            </div>
+                        </div>
+                        <div class="col-5 align-self-end">
+                            <img src="assets/images/therajwada.jpeg" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div *ngIf="userData['distributioncode'] =='DC-20221226182131773'" 
+                            class="avatar-md profile-user-wid mb-4">
+                                <img src="assets/images/abhishekh.svg" alt="" class="img-thumbnail rounded-circle">
+                            </div>
+                            <h5 class="font-size-15 text-truncate">{{userData['username']}}</h5>
+                            <p class="text-muted mb-0 text-truncate">{{userData['distributionname']}}</p>
+                        </div>
+
+                        <div class="col-sm-8">
+                            <div class="pt-4">
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <h5 class="font-size-15">{{totalRoomInvoice}}</h5>
+                                        <p class="text-muted mb-0">Invoice</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="font-size-15">{{totalPackageInvoice}}</h5>
+                                        <p class="text-muted mb-0">Package</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xl-8">
+            <div class="row">
+                <div *ngFor="let stat of statData" class="col-md-4">
+                    <app-stat [title]="stat.title" [value]="stat.value" [icon]="stat.icon"></app-stat>
+                    <!-- bx bx-menu-alt-right -->
+
+                </div>
+            </div>
+
+        </div>
+        <!-- end row -->
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Latest Restaurant Transaction</h4>
+                    <app-transaction [transactions]="transactions"></app-transaction>
+                    <!-- end table -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <h5 class="card-title me-2">Visitors</h5>
+                        <div class="ms-auto">
+                            <div class="toolbar button-items text-end">
+                                <button type="button" class="btn btn-light btn-sm" (click)="updateOptions( 'all' )"
+                                    [class.active]="activeOptionButton=='all'">
+                                    ALL
+                                </button>
+                                <button type="button" class="btn btn-light btn-sm" (click)="updateOptions( '1m' )"
+                                    [class.active]="activeOptionButton=='1m'">
+                                    1M
+                                </button>
+                                <button type="button" class="btn btn-light btn-sm" (click)="updateOptions( '6m' )"
+                                    [class.active]="activeOptionButton=='6m'">
+                                    6M
+                                </button>
+                                <button type="button" class="btn btn-light btn-sm active"
+                                    (click)="updateOptions( '1y' )" [class.active]="activeOptionButton=='1y'">
+                                    1Y
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-lg-4">
+                            <div class="mt-4">
+                                <p class="text-muted mb-1">Today</p>
+                                <h5>1024</h5>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="mt-4">
+                                <p class="text-muted mb-1">This Month</p>
+                                <h5>12356 <span class="text-success font-size-13">0.2 % <i
+                                            class="mdi mdi-arrow-up ms-1"></i></span></h5>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="mt-4">
+                                <p class="text-muted mb-1">This Year</p>
+                                <h5>102354 <span class="text-success font-size-13">0.1 % <i
+                                            class="mdi mdi-arrow-up ms-1"></i></span></h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <apx-chart dir="ltr" #chart class="apex-charts" [chart]="visitorsOptions.chart"
+                        [series]="visitorsOptions.series" [legend]="visitorsOptions.legend"
+                        [colors]="visitorsOptions.colors" [fill]="visitorsOptions.fill"
+                        [dataLabels]="visitorsOptions.dataLabels" [xaxis]="visitorsOptions.xaxis"
+                        [stroke]="visitorsOptions.stroke">
+                    </apx-chart>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6" *ngIf="this.topsellingmenus.length>=2">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Sales Analytics</h4>
+                    <div class="ms-auto">
+                        <div class="toolbar button-items text-end">
+                            <button type="button" class="btn btn-light btn-sm active" (click)="updateOptions( 'Day' )"
+                                [class.active]="activeOptionButton=='Day'">
+                                Day
+                            </button>
+                            <button type="button" class="btn btn-light btn-sm" (click)="updateOptions( 'Week' )"
+                                [class.active]="activeOptionButton=='Week'">
+                                Week
+                            </button>
+                            <button type="button" class="btn btn-light btn-sm" (click)="updateOptions( 'Month' )"
+                                [class.active]="activeOptionButton=='Month'">
+                                Month
+                            </button>
+                            
+                        </div>
+                    </div>
+
+                    <div>
+                        <apx-chart class="apex-charts" dir="ltr" [series]="salesAnalyticsDonutChart.series"
+                            [chart]="salesAnalyticsDonutChart.chart" [colors]="salesAnalyticsDonutChart.colors"
+                            [plotOptions]="salesAnalyticsDonutChart.plotOptions"
+                            [legend]="salesAnalyticsDonutChart.legend" [labels]="salesAnalyticsDonutChart.labels">
+                        </apx-chart>
+                    </div>
+
+                    <div class="text-center text-muted">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-primary me-1"></i>
+                                        {{this.topsellingmenus[0].menuname}}</p>
+                                    <h5>Rs. {{this.topsellingmenus[0].menuprice*this.topsellingmenus[0].totalquantity}}</h5>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-success me-1"></i>
+                                        {{this.topsellingmenus[1].menuname}}</p>
+                                    <h5>Rs. {{this.topsellingmenus[1].menuprice*this.topsellingmenus[1].totalquantity}}</h5>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="mt-4">
+                                    <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i>
+                                        {{this.topsellingmenus[2].menuname}}</p>
+                                    <h5>Rs. {{this.topsellingmenus[2].menuprice*this.topsellingmenus[2].totalquantity}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+
+    </div>
+
+
+</div> <!-- container-fluid -->
+<ng-template #content let-modal>
+    <div class="modal-header border-bottom-0">
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"> </button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light rounded-circle text-primary h1">
+                    <i class="mdi mdi-email-open"></i>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-xl-8">
+                    <h4 class="text-danger">Your Bill Is Pending!</h4>
+                    <p class="text-muted font-size-12 mb-4">Dear Subscriber, Your subscription is going to expire soon. Please pay your pending bills to avail uninterrupted services.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

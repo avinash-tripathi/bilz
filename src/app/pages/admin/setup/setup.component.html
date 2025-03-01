@@ -1,0 +1,265 @@
+<div class="container">
+    <app-page-title title="GENERAL SETUP"
+        [breadcrumbItems]="breadCrumbItems"></app-page-title>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <form [formGroup]="generalSetupForm">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Basic Information
+                        </h4>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputhotelName">Hotel Name</label>
+                                    <div class="position-relative">
+                                        <input id="formrow-inputhotelName" class="form-control border-radius w-100"
+                                            formControlName="hotelName"
+                                            [ngClass]="{'is-invalid':isSubmitted && val.hotelName.errors}"
+                                            name="hotelName" autocomplete="off" placeholder="Enter Hotel name">
+                                        <div *ngIf="generalSetupForm && val.hotelName.errors" class="invalid-feedback">
+                                            <span *ngIf="val.hotelName.errors.required">
+                                                Please enter Hotel Name
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label
+                                        for="formrow-selectDefaultCurrency">Default Currency</label>
+                                    <select id="formrow-selectDefaultCurrency" class="form-select"
+                                        formControlName="defaultCurrency"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.defaultCurrency.errors}">
+                                        <option value="" disabled>Select Currency</option>
+                                        <option value="SAR">SAR</option>
+                                        <option value="INR">INR</option>
+                                    </select>
+                                    <div *ngIf="generalSetupForm && val.defaultCurrency.errors"
+                                        class="invalid-feedback">
+                                        <span *ngIf="val.defaultCurrency.errors.required">
+                                            Please select currency
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputVATNumber">GST No.</label>
+                                    <div class="position-relative">
+                                        <input id="formrow-inputVATNumber" class="form-control border-radius w-100"
+                                            formControlName="vatNumber" name="vatNumber"
+                                            [ngClass]="{'is-invalid':isSubmitted && val.vatNumber.errors}"
+                                            autocomplete="off" placeholder="Enter GST Number">
+                                        <div *ngIf="generalSetupForm && val.vatNumber.errors" class="invalid-feedback">
+                                            <span *ngIf="val.vatNumber.errors.required">Enter valid VAT Number</span>
+                                            <span *ngIf="val.vatNumber.errors.pattern">GST No. is Invalid.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputState">Phone</label>
+                                    <input type="text" formControlName="phone" placeholder="Enter Phone Number"
+                                        class="form-control" id="formrow-inputCity">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputFName">First Name</label>
+                                    <input type="text" formControlName="firstName"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.firstName.errors}"
+                                        placeholder="Enter First Name" class="form-control" id="formrow-inputFName">
+                                    <div *ngIf="generalSetupForm && val.firstName.errors" class="invalid-feedback">
+                                        <span *ngIf="val.firstName.errors.required">
+                                            Enter First Name 
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputLName">Last Name</label>
+                                    <input type="text" formControlName="lastName" placeholder="Enter Last Name"
+                                        class="form-control" id="formrow-inputLName">
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="mb-3">
+                                    <label
+                                        for="formrow-inputemailAddress">Email</label>
+                                    <input type="text" readonly="true" formControlName="emailAddress"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.emailAddress.errors}"
+                                        placeholder="Enter Email Address" class="form-control"
+                                        id="formrow-inputemailAddress">
+                                    <div *ngIf="generalSetupForm && val.emailAddress.errors" class="invalid-feedback">
+                                        <span *ngIf="val.emailAddress.errors.required">
+                                            Enter valid email
+                                        </span>
+                                        <span *ngIf="val.emailAddress.errors.pattern">Enter valid email</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Address
+                        </h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputstreet1">Street1</label>
+                                    <input type="text" formControlName="street1"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.street1.errors}"
+                                        placeholder="Enter Street 1" class="form-control" id="formrow-inputstreet1">
+                                    <div *ngIf="generalSetupForm && val.street1.errors" class="invalid-feedback">
+                                        <span *ngIf="val.street1.errors.required">
+                                            Enter street 1
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputstreet2">Street2</label>
+                                    <input type="text" formControlName="street2" placeholder="Enter Street 2"
+                                        class="form-control" id="formrow-inputstreet2">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputSuburb">Suburb</label>
+                                    <input type="text" formControlName="suburb" placeholder="Enter Suburb"
+                                        class="form-control" id="formrow-inputSuburb">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputCity">City</label>
+                                    <input type="text" formControlName="city" placeholder="Enter City"
+                                        class="form-control" id="formrow-inputCity"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.city.errors}">
+                                    <div *ngIf="generalSetupForm && val.city.errors" class="invalid-feedback">
+                                        <span *ngIf="val.city.errors.required">
+                                            Enter City
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputpostalCode">Postal Code</label>
+                                    <input type="text" formControlName="postalCode" placeholder="Postal Code"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.postalCode.errors}"
+                                        class="form-control" id="formrow-inputpostalCode">
+                                    <div *ngIf="generalSetupForm && val.postalCode.errors" class="invalid-feedback">
+                                        <span *ngIf="val.postalCode.errors.required">
+                                            Enter postal code
+                                        </span>
+                                        <span *ngIf="val.postalCode.errors.pattern">Enter valid postal code</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputState">State</label>
+                                    <input type="text" formControlName="state" placeholder="Enter State"
+                                        class="form-control" id="formrow-inputState">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputCountry">Country</label>
+                                    <select class="form-select" id="formrow-inputCountry"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.country.errors}"
+                                        formControlName="country">
+                                        <option value="" disabled>Select</option>
+                                        <option value="IND">INDIA</option>
+                                        <!-- <option value="IND">INDIA</option> -->
+                                        <!-- <option>
+                                        </option> -->
+                                    </select>
+                                    <div *ngIf="generalSetupForm && val.country.errors" class="invalid-feedback">
+                                        <span *ngIf="val.country.errors.required">
+                                            Please Enter Country
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                            </div>
+                            <div class="col-lg-4 line-h mt-4">
+                                <!-- <a class="btn btn-secondary mx-2 float-end" (click)="CleanFilter()"> -->
+                                    <!-- Cancel -->
+                                <!-- </a> -->
+                                <a class="btn btn-success mx-2 float-end" (click)="UpdateGeneralSetupDetails()">
+                                    Save
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Configuration
+                        </h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="formrow-inputsrestauranttax">Restaurant Tax%</label>
+                                    <input type="number" formControlName="restauranttax"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.restauranttax.errors}"
+                                        placeholder="Enter Tax%" class="form-control" id="formrow-inputrestauranttax">
+                                    <div *ngIf="generalSetupForm && val.restauranttax.errors" class="invalid-feedback">
+                                        <span *ngIf="val.restauranttax.errors.required">
+                                            Enter Tax%
+                                        </span>
+                                        <span *ngIf="val.restauranttax.errors.pattern">Invalid Tax.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="formCheck1" 
+                                        formControlName="includekot">
+                                    <label class="form-check-label" for="formCheck1">
+                                        Enable KOT
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+                
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Center Modal -->
+    
+
+</div>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.128)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: white"> Loading... </p>
+</ngx-spinner>

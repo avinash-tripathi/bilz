@@ -1,0 +1,151 @@
+<div class="container-fluid">
+  <app-page-title title="MY WALLET" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+<div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="media">
+                        <div class="me-3">
+                            <img src="assets/images/users/avatar1.png" alt=""
+                                class="avatar-md rounded-circle img-thumbnail">
+                        </div>
+                        <div class="media-body align-self-center">
+                            <div class="text-muted">
+                                <h5>{{userData['franchisename']}}</h5>
+                                <p class="mb-1">{{userData['email']}}</p>
+                                <p class="mb-0">Id no: {{userData['franchisecode']}}</p>
+                            </div>
+                        </div>
+                        <div class="dropdown" ngbDropdown>
+                            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-wallet me-1"></i> <span
+                                    class="d-none d-sm-inline-block" ngbDropdownToggle>Wallet Balance <i
+                                        class="mdi mdi-chevron-down"></i></span></button>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-md" ngbDropdownMenu>
+                                <div class="dropdown-item-text">
+                                    <div>
+                                        <p class="text-muted mb-2">Available Balance</p>
+                                        <h5 class="mb-0">{{_currentBalance}} UNIT</h5>
+                                    </div>
+                                </div>
+                                  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Trasaction History</h4>
+                    
+                    <div class="table-responsive">
+                      <table class="table align-middle table-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Transaction Number</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Transaction Date</th>
+                            <th>Description</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let _data of ledgers  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                            <td>{{_data.transactionnumber}}</td>
+                            <td>{{_data.debit}}</td>
+                            <td>{{_data.credit}}</td>
+                            <td>{{_data.transactiondate | date: 'dd MMM, YYYY'}}</td>
+                            
+                            <td>{{_data.description}}</td>
+                            </tr>
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  
+                    <!-- pagination -->
+                    <ngb-pagination 
+                    *ngIf="ledgers?.length>1"
+                    [collectionSize]="ledgers?.length" 
+                      [(page)]="currentpage"
+                      [pageSize]="pageSize"
+                      class="pagination pagination-rounded justify-content-end mb-2" aria-label="Default pagination">
+                    </ngb-pagination>
+                    
+               </div>
+            </div>
+        </div>    
+        <div class="col-xl-4" *ngIf="false">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Add Money</h4>
+                    <div>
+                        <p class="text-muted mb-2"><i class="mdi mdi-wallet me-1"></i> Wallet Balance</p>
+                        <h5>{{_currentBalance}} UNIT</h5>
+                    </div>
+                    <label>Instant Recharge :</label>
+                    <form  [formGroup]="formData">
+                          <div class="row">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text">Amount</label>
+                                                </div>
+                                                <input type="text" formControlName="payeeamount" class="form-control"
+                                                [ngClass]="{'is-invalid': submitted && form.payeeamount.errors}"
+                                                >
+                                                <div class="input-group-append">
+                                                    <label class="input-group-text">Rs.</label>
+                                                </div>
+                                                <div *ngIf="submitted && form.payeeamount.errors" class="invalid-feedback">
+                                                    <span *ngIf="form.payeeamount.errors.required">Amount is required.</span>
+                                                    <span *ngIf="form.payeeamount.errors.pattern">Please enter numeric digits only.</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text">Name</label>
+                                                </div>
+                                                <input [readOnly]="true" type="text" formControlName="payeename" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeename.errors}"
+                                                >
+                                                
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text">Email</label>
+                                                </div>
+                                                <input [readOnly]="true" type="text" formControlName="payeeemail" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeeemail.errors}"
+                                                >
+                                                
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text">Mobile</label>
+                                                </div>
+                                                <input [readOnly]="true" type="text" formControlName="payeephone" class="form-control" [ngClass]="{'is-invalid': submitted && form.payeephone.errors}">
+                                                
+                                            </div>
+
+                                            <div class="text-center">
+                                            <button type="button" (click)="pay()" 
+                                            [disabled]="disablePaymentButton"
+                                            class="btn btn-success w-md">Proceed to Pay
+                                            </button>
+                                            </div>
+                                        
+
+                          </div>
+                          </form>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    
+</div>

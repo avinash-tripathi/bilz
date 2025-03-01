@@ -1,0 +1,132 @@
+.border-radius {
+    border-radius: 5px;
+  }
+  
+  .font-s {
+    font-size: 12px;
+  }
+  
+  .card-height {
+    min-height: 80vh;
+  }
+  
+  .set-card-flex {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .border-bottom-none {
+    td {
+      border-bottom: 0px;
+    }
+  }
+  .hovered {
+    background-color: rgba(247, 239, 16, 0.892);
+  }
+  
+  .printme {
+    display: none;
+  }
+  
+  @media print {
+    .no-printme {
+      display: none;
+    }
+  
+    .printme {
+      display: block;
+    }
+  }
+  
+  .font-w {
+    font-weight: 600;
+  }
+  
+  .two-img {
+    display: grid;
+    grid-template-columns: repeat(2, 36px);
+    grid-column-gap: 4px;
+    row-gap: 4px;
+  }
+  
+  .border-box {
+    border-left: 3px solid #34c38f;
+    border-radius: 5px;
+    // border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  
+    .bd-highlight {
+      border-bottom: none;
+    }
+  }
+  
+  .bd-highlight {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .padding-y {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  
+  .border-dot {
+    border: dashed 1px #000;
+  }
+  
+  .btn-check:focus+.btn,
+  .btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0rem rgb(85 110 230 / 25%);
+  }
+  
+  .font-size {
+    font-size: 24px;
+  }
+  
+  .center-on-screen {
+    // position: absolute;
+    margin-top: 20% !important;
+    // left: 50%;
+  
+    // margin-left: -250px;
+  }
+  .set-w-h{
+    width: 80px;
+    height: 80px;
+    
+  }
+  .set-border {
+    :nth-child(odd){
+      .set{
+        border-top: 5px solid #556ee6;
+      }
+    }
+    :nth-child(even){
+      .set{
+        border-top: 5px solid #34c38f;
+      }
+    }
+    // :nth-child(3){
+    //   .set{
+    //     // #f46a6a
+    //     border-top: 5px solid #50a5f1
+    //   }
+    // }
+    // :nth-child(4){
+    //   .set{
+    //     border-top: 5px solid #f1b44c;
+    //   }
+    // }
+  }
+  
+  .bg-darks {
+    background-color: #2a3042;
+  }
+  
+  .set-position {
+    top: -100% !important;
+    right: 105% !important;
+    padding: 15px;
+  }
+  

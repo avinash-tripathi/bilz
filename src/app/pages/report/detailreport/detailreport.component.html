@@ -1,0 +1,161 @@
+<div class="container-fluid">
+  <app-page-title title="DETAIL REPORT" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+
+            </div>
+            <!-- end col-->
+          </div>
+          <form [formGroup]="formData">
+            <div class="row mb-2">
+              <div class="col-sm-3">
+                <div class="mb-3">
+                  <label>Booking From:</label>
+                  <div class="input-group clockpicker">
+                    <input  type='date'  class="form-control" formControlName="fromdate" placeholder="yyyy-mm-dd"
+                    >
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="mb-3">
+                  <label>Booking To:</label>
+                  <div class="input-group clockpicker">
+                    <input type='date' class="form-control" formControlName="todate" placeholder="yyyy-mm-dd"
+                    >
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="mb-3">
+                  <label class="control-label">Filter Mode</label>
+            <select class="form-select" id="filtervalue" formControlName="filtervalue" >
+              <option *ngFor="let _data of filterArray ;let i = index;" [value]="_data.code" [selected]="_data.code === defaultSelectedValue">
+                {{_data.value}}</option>
+            </select>
+
+            
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="mb-3">
+                  <label></label>
+                  <div class="text-sm-end">
+                    <button type="button" (click)="_fetchData();" class="btn btn-success btn-rounded mb-2 mr-2">
+                      <i class="mdi mdi-search me-1"></i> Search
+                    </button>
+
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="mb-3">
+                  <label></label>
+                  <div class="text-sm-end">
+
+                    <button type="button" (click)="download();" class="btn btn-success btn-rounded mb-2 mr-2">
+                      <span><i class="fas fa-file-excel"></i></span> Download
+                    </button>
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="table-responsive mb-0">
+            <table class="table table-sm table-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Invoice No</th>
+                  <th class="align-middle">Customer Name/Phone</th>
+                  <th class="align-middle">Booking Date From</th>
+                  <th class="align-middle">Booking Date To</th>
+                  <th class="align-middle">Booking Type</th>
+                  <th class="align-middle">Payment Amount</th>
+                  <th class="align-middle">Payment Mode</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let _purchase of bookingData  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize ;let i = index;">
+                  <td>{{_purchase.bookingcode}}</td>
+                  <td style="color:blue">{{_purchase.invoiceno}}</td>
+                  <td>
+                    <p class="mb-1">{{_purchase.customername}}</p>
+                    <p class="mb-0">{{_purchase.customercontactno}}</p>
+                  </td>
+                  <td>
+                    {{_purchase.bookingdatefrom | date:'mediumDate'}}
+                  </td>
+                  <td>
+                    {{_purchase.bookingdateto | date:'mediumDate'}}
+                  </td>
+                  <td>
+                    {{_purchase.featuretype}}
+                  </td>
+                 
+                  <td>
+                    {{_purchase.payment}}
+                  </td>
+                  <td>
+                    {{_purchase.paymentmode}}
+                  </td>
+                  <td>
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                        ngbDropdownToggle aria-expanded="true">
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                       
+                        <li><a href="javascript: void(0);"  (click)="openInvoiceModal(invoicecontent,_purchase);"
+                          class="dropdown-item"><i class="mdi mdi-receipt me-1"></i>
+                            Invoice</a></li>
+                           
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- pagination -->
+          <ngb-pagination *ngIf="bookingData?.length>1" [collectionSize]="bookingData?.length"
+            [(page)]="currentpage" [pageSize]="pageSize" class="pagination pagination-rounded justify-content-end mb-2"
+            aria-label="Default pagination">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+   <!-- Standard Modal For Invoice -->
+<ng-template #invoicecontent role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Invoice</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  </div>  
+     <div class="modal-body">
+      <app-bookinginvoice [purchase]="_selectedBooking"></app-bookinginvoice>
+  </div>
+</ng-template>  
+</div>
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.128)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>

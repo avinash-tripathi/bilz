@@ -1,0 +1,41 @@
+
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #contentToConvert {
+        width: 58mm;
+        max-width: 58mm;
+        font-size: 12px;
+        text-align: center;
+        
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-bottom: 1px dashed black;
+      }
+      td, th {
+        padding: 2px 3px; /* Reduced padding */
+        word-wrap: break-word;
+        white-space: nowrap; /* Prevents wrapping */
+      }
+      .amount {
+        display: flex;
+        justify-content: space-between;
+        white-space: nowrap;
+      }
+      img {
+        display: block;
+        margin: 0 auto;
+        max-width: 50mm;
+        height: auto;
+      }
+      .footer-note {
+        font-size: 10px;
+        text-align: center;
+        padding-top: 20px; /* Adds space above footer note */
+        margin-top: 20px;
+      }
+    }

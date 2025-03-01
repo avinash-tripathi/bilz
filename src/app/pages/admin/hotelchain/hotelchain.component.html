@@ -1,0 +1,291 @@
+<div class="container-fluid">
+    <app-page-title title="HOTEL CHAIN" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-sm-4">
+                <div class="search-box me-2 mb-2 d-inline-block">
+                  <div class="position-relative">
+                    <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                    <i class="bx bx-search-alt search-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <div class="text-sm-end">
+                  <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                    (click)="openModal(content);reset()">
+                    <i class="mdi mdi-plus me-1"></i> Add New Chain
+                  </button>
+                </div>
+              </div>
+              <!-- end col-->
+            </div>
+            <div class="table-responsive">
+              <table class="table mb-0 table-sm">
+                <thead  class="table-light">
+                  <tr>
+                    <th>Chain Code</th>
+                    <th>Chain Name</th>
+                    <th>Chain Address</th>
+                    <th>Phone Number</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody card-body ng-star-inserted>
+                  <ng-container 
+                    *ngFor="let _data of chainArray  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                    <tr bx bx-chevron-right font-size (click)="hideShow(i)" >
+                      <td class="pointer">{{_data.chaincode}}</td>
+                      <td>{{_data.chainname}}</td>
+                      <td>{{_data.street1}} {{_data.street2}} {{_data.city}} {{_data.state}}</td>
+                      <td>{{_data.phone}}</td>
+                      <td>
+                        <div class="dropdown" ngbDropdown placement="bottom-right">
+                          <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                            ngbDropdownToggle aria-expanded="True">
+                            <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                            <li><a href="javascript: void(0);" (click)="dataToEdit(_data);openModal(content);"
+                                class="dropdown-item"><i class="fas fa-pencil-alt text-success me-1"></i>
+                                Edit</a>
+                            </li>
+                            
+                            <li><a href="javascript: void(0);" (click)="deleteChain(_data);" 
+                              class="dropdown-item text-danger"><i class="mdi mdi-delete me-1"></i>
+                                Delete</a>
+                            </li>           
+                           
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                   
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <!-- pagination -->
+            <ngb-pagination *ngIf="chainArray?.length>1" [collectionSize]="chainArray?.length" [(page)]="currentpage"
+              [pageSize]="pageSize" class="pagination pagination-rounded justify-content-end mb-2"
+              aria-label="Default pagination">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end row -->
+  </div>
+  
+  <!-- Standard Modal -->
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">{{cardTitle}}</h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="formData">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        Basic Information
+                    </h4>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="formrow-inputchainname">Chain Name</label>
+                                <div class="position-relative">
+                                    <input id="formrow-inputchainname" class="form-control border-radius w-100"
+                                        formControlName="chainname"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.chainname.errors}"
+                                        name="chainname" autocomplete="off" placeholder="Enter Chain name">
+                                    <div *ngIf="formData && val.chainname.errors" class="invalid-feedback">
+                                        <span *ngIf="val.chainname.errors.required">
+                                            Please enter Chain Name
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label
+                                    for="formrow-selectdefaultcurrency">Default Currency</label>
+                                <select id="formrow-selectdefaultcurrency" class="form-select"
+                                    formControlName="defaultcurrency"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.defaultcurrency.errors}">
+                                    <option value="" disabled>Select Currency</option>
+                                    
+                                    <option value="INR">INR</option>
+                                </select>
+                                <div *ngIf="formData && val.defaultcurrency.errors"
+                                    class="invalid-feedback">
+                                    <span *ngIf="val.defaultcurrency.errors.required">
+                                        Please select currency
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="formrow-inputvatnumber">vatnumber</label>
+                                <div class="position-relative">
+                                    <input id="formrow-inputvatnumber" class="form-control border-radius w-100"
+                                        formControlName="vatnumber" name="vatnumber"
+                                        [ngClass]="{'is-invalid':isSubmitted && val.vatnumber.errors}"
+                                        autocomplete="off" placeholder="Enter VAT Number">
+                                    <div *ngIf="formData && val.vatnumber.errors" class="invalid-feedback">
+                                        <span *ngIf="val.vatnumber.errors.required">
+                                            Enter valid VAT Number
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="formrow-inputState">Phone</label>
+                                <input type="text" formControlName="phone" placeholder="Enter Phone Number"
+                                    class="form-control" id="formrow-inputCity">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label
+                                    for="formrow-inputemailAddress">Email</label>
+                                <input type="text"  formControlName="emailAddress"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.emailAddress.errors}"
+                                    placeholder="Enter Email Address" class="form-control"
+                                    id="formrow-inputemailAddress">
+                                <div *ngIf="formData && val.emailAddress.errors" class="invalid-feedback">
+                                    <span *ngIf="val.emailAddress.errors.required">
+                                        Enter valid email
+                                    </span>
+                                    <span *ngIf="val.emailAddress.errors.pattern">Enter valid email</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        Address
+                    </h4>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputstreet1">Street1</label>
+                                <input type="text" formControlName="street1"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.street1.errors}"
+                                    placeholder="Enter Street 1" class="form-control" id="formrow-inputstreet1">
+                                <div *ngIf="formData && val.street1.errors" class="invalid-feedback">
+                                    <span *ngIf="val.street1.errors.required">
+                                        Enter street 1
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputstreet2">Street2</label>
+                                <input type="text" formControlName="street2" placeholder="Enter Street 2"
+                                    class="form-control" id="formrow-inputstreet2">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputSuburb">Suburb</label>
+                                <input type="text" formControlName="suburb" placeholder="Enter Suburb"
+                                    class="form-control" id="formrow-inputSuburb">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputCity">City</label>
+                                <input type="text" formControlName="city" placeholder="Enter City"
+                                    class="form-control" id="formrow-inputCity"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.city.errors}">
+                                <div *ngIf="formData && val.city.errors" class="invalid-feedback">
+                                    <span *ngIf="val.city.errors.required">
+                                        Enter City
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputpostalcode">Postal Code</label>
+                                <input type="text" formControlName="postalcode" placeholder="Postal Code"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.postalcode.errors}"
+                                    class="form-control" id="formrow-inputpostalcode">
+                                <div *ngIf="formData && val.postalcode.errors" class="invalid-feedback">
+                                    <span *ngIf="val.postalcode.errors.required">
+                                        Enter postal code
+                                    </span>
+                                    <span *ngIf="val.postalcode.errors.pattern">Enter valid postal code</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputState">State</label>
+                                <input type="text" formControlName="state" placeholder="Enter State"
+                                    class="form-control" id="formrow-inputState">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="formrow-inputCountry">Country</label>
+                                <select class="form-select" id="formrow-inputCountry"
+                                    [ngClass]="{'is-invalid':isSubmitted && val.country.errors}"
+                                    formControlName="country">
+                                    <option value="" disabled>Select</option>
+                                    <option value="IND">INDIA</option>
+                                    <!-- <option value="IND">INDIA</option> -->
+                                    <!-- <option>
+                                    </option> -->
+                                </select>
+                                <div *ngIf="formData && val.country.errors" class="invalid-feedback">
+                                    <span *ngIf="val.country.errors.required">
+                                        Please Enter Country
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                        </div>
+                        <div class="col-lg-4 line-h mt-4">
+                            <a class="btn btn-secondary mx-2 float-end">
+                                Cancel
+                            </a>
+                            <a class="btn btn-success mx-2 float-end" (click)="save()">
+                                Save
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </form>
+    </div>
+  </ng-template>
+  
+ 

@@ -1,0 +1,239 @@
+<div class="container-fluid">
+    <app-page-title title="USER" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-sm-4">
+                <div class="search-box me-2 mb-2 d-inline-block">
+                  <div class="position-relative">
+                    <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                    <i class="bx bx-search-alt search-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <div class="text-sm-end">
+                  <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                    (click)="openModal(content);reset()">
+                    <i class="mdi mdi-plus me-1"></i> New User
+                  </button>
+                </div>
+              </div>
+              <!-- end col-->
+            </div>
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead  class="table-light">
+                  <tr>
+                    <th>User Code</th>
+                    <th>User Name</th>
+                    <th>street1</th>
+                    <th>Email</th>
+                    <th>Contact No.</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody card-body ng-star-inserted>
+                  <ng-container 
+                    *ngFor="let _data of usersData  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                    <tr bx bx-chevron-right font-size >
+                      <td class="pointer">{{_data.usercode}}</td>
+                      <td>{{_data.username}}</td>
+                      <td>{{_data.street1}}</td>
+                      <td>{{_data.email}}</td>
+                      <td>{{_data.mobileno}}</td>
+                      <td>
+                        <div class="dropdown" ngbDropdown placement="bottom-right">
+                          <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                            ngbDropdownToggle aria-expanded="True">
+                            <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                            <li><a href="javascript: void(0);" (click)="dataToEdit(_data);openModal(content);"
+                                class="dropdown-item"><i class="fas fa-pencil-alt text-success me-1"></i>
+                                Edit</a></li>
+                                <li><a href="javascript: void(0);" (click)="openResetModal(_data,contentResetPassword);"
+                                  class="dropdown-item"><i class="fas fa-key text-success me-1"></i>
+                                  Reset Password</a></li>
+
+                                  <li><a href="javascript: void(0);" (click)="deleteUser(_data);" 
+                                    class="dropdown-item text-danger"><i class="mdi mdi-delete me-1"></i>
+                                      Delete</a>
+                                  </li>          
+                          </ul>
+                        </div>
+                      </td>
+  
+                    </tr>
+                    
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <!-- pagination -->
+            <ngb-pagination *ngIf="usersData?.length>1" [collectionSize]="usersData?.length" [(page)]="currentpage"
+              [pageSize]="pageSize" class="pagination pagination-rounded justify-content-end mb-2"
+              aria-label="Default pagination">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end row -->
+  </div>
+  
+  <!-- Standard Modal -->
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">{{cardTitle}}</h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="save()" [formGroup]="formData">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="control-label">User Name</label>
+              <input class="form-control" placeholder="Enter User Name" type="text" name="title" autocomplete="off"
+                formControlName="username" [ngClass]="{'is-invalid': submitted && form.username.errors}" />
+              <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
+                <span *ngIf="form.username.errors.required">User Name is required.</span>
+  
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="control-label">Role</label>
+              <select  class="form-select" id="role"
+                formControlName="role" [ngClass]="{'is-invalid': submitted && form.role.errors}">
+                <option [ngValue]="null" selected disabled>Select option</option>
+                <option *ngFor="let _data of roleArray ;let i = index;" [value]="_data.rolecode">
+                  {{_data.rolename}}</option>
+              </select>
+  
+              <div *ngIf="submitted && form.role.errors" class="invalid-feedback">
+                <span *ngIf="form.role.errors.required">role is required.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="control-label">Street 1</label>
+              <input class="form-control" placeholder="Enter Street1" type="text" autocomplete="off" name="street1"
+                formControlName="street1"  />
+             
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="control-label">Street 2</label>
+              <input class="form-control" placeholder="Enter Street1" type="text" autocomplete="off" name="street2"
+                formControlName="street2"  />
+              
+            </div>
+          </div>
+
+         
+        </div>
+        <div class="row">
+          
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="control-label">City</label>
+              <input class="form-control" placeholder="City" type="text" autocomplete="off"
+                name="city" formControlName="city"
+                />
+              
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="control-label">Mobile No.</label>
+              <input class="form-control" placeholder="Enter mobileno" type="text" name="mobileno" autocomplete="off"
+                formControlName="mobileno" [ngClass]="{'is-invalid': submitted && form.mobileno.errors}"  />
+              <div *ngIf="submitted && form.mobileno.errors" class="invalid-feedback">
+                <span *ngIf="form.mobileno.errors.required">mobileno is required.</span>
+                <span *ngIf="form.mobileno.errors.pattern">Please, Enter 10 digit mobileno Number.</span>
+              </div>
+            </div>
+          </div>
+         
+          <div class="col-6">
+            <div class="mb-3">
+                <label class="control-label">Email</label>
+                <input class="form-control" placeholder="Enter Email" type="text" autocomplete="off" name="email"
+                  formControlName="email" [ngClass]="{'is-invalid': submitted && form.email.errors}" />
+                <div *ngIf="submitted && form.email.errors" class="invalid-feedback">
+                  <span *ngIf="form.email.errors.required">Email is required.</span>
+                </div>
+              </div>
+          </div>
+        </div>
+  
+        
+        <div class="row">
+          <div class="col-6">
+            <button type="submit" class="btn btn-success" id="btn-save-event">
+              Save
+            </button>
+          </div>
+        </div>
+  
+      </form>
+    </div>
+  </ng-template>
+
+  <!-- Standard Modal -->
+  <ng-template #contentResetPassword role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">Reset Password for: {{resetUser?.username}} </h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="save()" [formGroup]="formResetData">
+        <div class="mb-3">
+          <label for="password">New Password</label>
+
+          <input type="password" formControlName="password" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" id="password" placeholder="Password" />
+
+          <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Password is required</div>
+            <div *ngIf="f.password.errors.minlength">Password must be of atleast 8 character</div>
+            
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="password">Confirm Password</label>
+
+          <input type="password" formControlName="confirmpassword" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.confirmpassword.errors }" id="confirmpassword" placeholder="Confirm Password" />
+
+            <div *ngIf="submitted && f.confirmpassword.errors" class="invalid-feedback">
+              <div *ngIf="f.confirmpassword.errors.required">Confirm Password is required</div>
+              <div *ngIf="f.confirmpassword.errors.minlength">Password must be of atleast 8 character</div>
+              <div *ngIf="f.confirmpassword.errors.confirmedValidator">Password and Confirm Password must be match.</div>
+              
+            </div>
+             
+           
+        </div>
+
+        <div class="text-end">
+          <button class="btn btn-primary w-md" (click)="resetPassword();" type="submit">Reset</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <ngx-spinner bdColor = "rgba(0, 0, 0, 0.128)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
+  

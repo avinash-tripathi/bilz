@@ -1,0 +1,381 @@
+<div class="container no-printme">
+    <div class="row">
+        <div class="col-md-7">
+                <strong class="h4 text-success">
+                    {{userData.distributiondetail.distributionname}} MENU 
+                </strong>
+                
+            <div class="search-box d-inline-block w-100">
+                <label for="formrow-inputState"> </label>
+                <div class="position-relative">
+                    <input class="form-control border-radius w-100" (change)="selectEvent($event)"
+                        list="datalistOptions" placeholder="Search Menu" value = "{{selectedRestaurantMenu?.restaurantmenuname}}" >
+                    <i class="bx bx-search-alt search-icon"></i>
+                    <datalist id="datalistOptions" style="width: 200px;">
+                        <option *ngFor="let item of restaurantMenus" [value]="item.restaurantmenucode">
+                            <div class="h5">{{item.restaurantmenuname}}
+                                <img src="assets/images/shahipaneer.jpg" alt="" width="60" height="60" />
+                            </div>
+                        </option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="CCcenter-on-screen">
+                <div class="h2 text-center my-3">Quick Keys</div>
+               
+                <div class="row set-border" style="height: 430px;overflow: auto;">
+                    <div *ngFor="let category of groupedMenu | keyvalue">
+                        <h4 class="text-primary text-center">
+                            <i class="bx bx-dish text-primary"></i> <!-- BoxIcon -->
+                            {{ category.key }}
+                        </h4> 
+                    
+                        <div class="row">
+                            <div class="col-lg-3" *ngFor="let item of category.value">
+                                <div class="card text-white-50 set pointer" (click)="selectTopProduct(item)">
+                                    <div class="card-body hovered" [ngClass]="{'hovered': item.ishovered}" 
+                                    (mouseenter)="item.ishovered = true" 
+                                    (mouseleave)="item.ishovered = false">
+                                        <div class="font-m m-auto text-success text-center">{{ item.menuname }}</div>
+                                        <div class="text-primary text-center">
+                                            <small>{{ item.categoryname }}</small>
+                                            <div class="text-center">
+                                                <!-- <img src="assets/images/kadhaipaneer.jpeg" alt="" width="100" height="100" /> -->
+                                                <i class="bx bxs-food-menu badge-soft-success" style="font-size: 30px; width: 40px;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5" >
+            <div class="d-flex justify-content-around pb-2">
+            <ng-template #centerDataModal let-modal>
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Retrieve Sale</h5>
+                    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"
+                        aria-hidden="true"></button>
+                </div>
+                <div>
+                    <ng-container *ngFor="let item of ParkSaleArray; let i = index;">
+                        <ng-container>
+                            <div class="p-2 border-top border-bottom">
+                                <div class="pointer" (click)="retrieveParkedSales(item)">
+                                    <ng-container *ngIf="item.length!=0">
+                                        <div class="card-body p-2">
+                                            <div class="media">
+                                                <div class="align-self-center "
+                                                    [ngClass]="{'two-img':item.length!=0}">
+                                                    <ng-container *ngFor="let value of item; let i = index;">
+                                                        <div [ngClass]="{'':item.length!=0}">
+                                                            <div class="text-center">
+                                                                <i class="bx bxs-food-menu badge-soft-success" style="font-size: 30px; width: 40px;"></i>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                                <div class="media-body ps-5">
+                                                    <ng-container *ngFor="let value of item; let i = index;">
+                                                        <div>{{value.quantity}} x
+                                                            {{value.productDetails.restaurantmenuname}}</div>
+                                                       
+                                                    </ng-container>
+                                                </div>
+                                                <div class="media-body ps-5">
+                                                    <div>{{item[0].notes}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </ng-template>
+            <button class="btn btn-primary" [disabled]="ParkSaleArray.length==0"
+                (click)="centerModal(centerDataModal)">
+                Retrieve Sale
+            </button>
+            <button class="btn btn-primary" (click)="centerModal(centerDataModalPark)" [disabled]="disableButton">
+                Park Sale
+            </button>
+        
+            <ng-template #centerDataModalPark let-modal>
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Park Your Sale</h5>
+                    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"
+                        aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="parkForm">
+                        <label for="formrow-inputCity">Park Note</label>
+                        <input [ngClass]="{'is-invalid':Submitted && value.note.errors}" type="text"
+                            formControlName="note" class="form-control" placeholder="write a note">
+                        <div *ngIf="parkForm && value.note.errors" class="invalid-feedback">
+                            <span *ngIf="value.note.errors.required"> Note is Mandatory </span>
+                        </div>
+                        <button class="btn btn-primary mt-2" (click)="ParkSaleNote()">
+                            Park
+                        </button>
+                    </form>
+                </div>
+            </ng-template>
+            <div class="btn-group" role="group" ngbDropdown>
+                <button id="btnGroupVerticalDrop1" [disabled]="disableButton" ngbDropdownToggle type="button"
+                    class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    More Action <i class="mdi mdi-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="btnGroupVerticalDrop1">
+                    <a class="dropdown-item" (click)="DisCardButton()">Discard Sale</a>
+                </div>
+            </div>
+        </div>
+            <div class="card card-height" >
+                <div class="card-body set-card-flex p-0">
+                    <div class="row">
+                        <div class="div">
+                            <div class="col-md-12 w-100 h4 text-center my-1 text-light btn-success">
+                                BILLABLE ITEM'S
+                            </div>
+
+                        </div>
+                        
+                        <!-- <div class="col-md-9"> -->
+                            <!-- <div class="search-box d-inline-block w-100 py-2 ps-3"> -->
+                                <!-- <div class="position-relative"> -->
+                                    <!-- <input class="form-control border-radius w-100" [disabled]="customer" [(ngModel)]="product.customercode" -->
+                                        <!-- list="datalistOption" placeholder="Add Customer" (change)="selectCustomer($event)"> -->
+                                    <!-- <i class="bx bx-search-alt search-icon"></i> -->
+                                    <!-- <datalist id="datalistOption" style="width: 200px;"> -->
+                                        <!-- <option *ngFor="let item of customersData" [value]="item.customercode"> -->
+                                            <!-- <ng-container> -->
+                                                <!-- &nbsp;&nbsp;{{item.firstname}}<br> -->
+                                                <!-- &nbsp;&nbsp;{{item.phone}}<br> -->
+                                            <!-- </ng-container> -->
+                                        <!-- </option> -->
+                                    <!-- </datalist> -->
+                                <!-- </div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                        <!-- <div class="col-md-3 py-2"> -->
+                            <!-- <button type="button" (click)="AddCustomer()" class="px-2 btn btn-success"> -->
+                                <!-- Add -->
+                            <!-- </button> -->
+                        <!-- </div> -->
+                    </div>
+                    <div class="text-primary px-3 h5" *ngIf="customerdata.firstname">
+                        ({{customerdata.firstname}}    {{customerdata.phone}})
+                    </div>
+                    <form [formGroup]="orderForm">
+                        <div formArrayName="items" [ngClass]="{'border-box':show==i}"
+                            *ngFor="let item of orderForm.get('items')['controls']; let i = index;">
+                            <div class="d-flex bd-highlight">
+                                <div class="p-2 my-auto">
+                                    <i class="bx bx-chevron-right h4 m-auto px-2" (click)="hideShow(i)"></i>
+                                </div>
+                                <div class="p-2">
+                                    <strong [ngClass]="{'text-danger':items.value[i].quantity<0}">
+                                        {{items.value[i].quantity}}</strong>
+                                </div>
+                                <div class="p-2">
+                                    <span class="h5 font-w" *ngIf="items.value[i].restaurantmenucode">
+                                        {{items.value[i].restaurantmenuname}}
+                                    </span>
+                                    
+                                </div>
+                                <div class="ms-auto p-2">
+                                    <span class="h5 font-w">
+                                        {{roundOff((items.value[i].sellprice *
+                                        items.value[i].quantity)-roundOff(roundOff(items.value[i].sellprice
+                                        *
+                                        items.value[i].quantity/100)*items.value[i].discount)) }}
+                                    </span>
+                                    <i class="fas fa-trash-alt text-secondary h6 px-3" (click)="removeItem(i)"></i>
+                                </div>
+                            </div>
+                            <div [formGroupName]="i" *ngIf="show==i"  class="px-3 py-2 pb-3">
+                                <div class="row" >
+                                    <div class="col-md-4">
+                                        <label for="formrow-inputCity"><strong> Quantity </strong></label>
+                                        
+                                        <input formControlName="quantity" type="number" [ngClass]="{'is-invalid':Submit && item.controls.quantity.errors}" class="form-control"
+                                            placeholder="Quantity">
+                                            <div *ngIf="orderForm && item.controls.quantity.errors" class="invalid-feedback">
+                                                Invalid
+                                            </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        
+
+                                        <label for="formrow-sellprice"><strong> Price </strong> </label>
+                                        <input formControlName="sellprice" type="number" class="form-control"
+                                            placeholder="price">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="formrow-inputCity"><strong> discount (%) </strong></label>
+                                        <input formControlName="discount" type="number" class="form-control" [ngClass]="{'is-invalid':Submit && item.controls.discount.errors}"
+                                            [readonly]="items.value[i].return"
+                                            placeholder="discount (%)">
+                                            <div *ngIf="orderForm && item.controls.discount.errors" class="invalid-feedback">
+                                                Invalid
+                                            </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mt-auto px-3 pb-2">
+                        <hr>
+                        <span class="h5"><strong> ADD </strong></span>
+                        <span class="float-end">
+                            <span class="px-2 text-primary pointer h5" (click)="smallModal(smallDataModal)">Discount</span>
+                            
+                        </span>
+                        
+                        <!-- Add discount start -->
+                        <ng-template #smallDataModal let-modal>
+                            <div class="modal-header">
+                              <h5 class="modal-title mt-0">Add Discount</h5>
+                              <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-hidden="true"></button>
+                            </div>
+                            <div class="modal-body">
+                                <button type="button" class="btn btn-outline-success m-1" (click)="select('pre')" [ngClass]="{'active':SelectDiscount=='pre'}">%</button>
+                                <button type="button" class="btn btn-outline-success m-1" (click)="select('rs')"  [ngClass]="{'active':SelectDiscount=='rs'}">Amount</button>
+                                <p class="text-secondary py-2 m-0">{{discountAmountTitle}}</p>
+                                <input type="number" class="form-control" [ngClass]="{'is-invalid':invaildmsgPer || invaildmsgRs }" placeholder="discount" [(ngModel)]="product.discount">
+                                <div *ngIf="invaildmsgPer" class="invalid-feedback">
+                                    Invalid
+                                </div>
+                                <div *ngIf="invaildmsgRs" class="invalid-feedback">
+                                    Invalid
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-secondary m-2" (click)="modal.dismiss('Cross click')" id="btn-save-event">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-success ms-2" (click)="addDicount()"  id="btn-save-event">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                          </ng-template>
+                           <!-- Add discount end-->
+                        <hr>
+                        <span class="h5">Subtotal</span>
+                        <span class="float-end h5">INR {{roundOff(getSubTotal(orderForm)) }}</span>
+                        <hr>
+                        <div *ngIf="dicountAmount">
+                            <i class="fas fa-trash-alt text-secondary h6 px-1"  (click)="removedicount()"></i>
+                            <span class="h5 text-primary">Discount</span>
+                            <span class="h5" *ngIf="SelectDiscount=='pre'"> ({{this.dicountAmount}})%</span>
+                          
+                            <span class="float-end h5" *ngIf="SelectDiscount=='pre'">- INR {{roundOff((getSubTotal(orderForm)/100)*this.dicountAmount)  }}</span>
+                            <span class="float-end h5" *ngIf="SelectDiscount=='rs' ">- INR {{roundOff(this.dicountAmount) }}</span>
+                
+                        </div>
+                        <span class="h5">Tax </span>
+                        <span>
+                            &nbsp;&nbsp; {{openTimeDataPassTax}}%
+                        </span>
+                        <hr>
+                       
+                        <!-- && getTotalItem(orderForm)==0 -->
+                        <button [disabled]="disableButton" [ngClass]="{'btn-danger':getSubTotal(orderForm)<0}"
+                        (click)="saveOrder(orderForm)"
+                            class="btn btn-success w-100 text-light" >
+                            <span class="float-start">
+                                <span class="fas fa-shopping-cart">
+                                    <small>&nbsp;&nbsp; {{getTotalItem(orderForm)}} Item</small>
+                                </span>
+                            </span>
+                            <span class="h5 text-light text-center">PROCEED</span>
+                            <span class="float-end h4 text-light" >INR {{roundOff(getTotalAmount(orderForm)) }} </span>
+                            
+                           </button>
+                          
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+
+<!-- open for Add customer -->
+<ng-template #CustomerDataModal role="document" let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Add Customer</h5>
+        <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="AddCustomerForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="control-label">First Name</label>
+                        <input class="form-control" placeholder="Enter First Name" type="text" name="title"
+                            autocomplete="off" formControlName="firstname"
+                            [ngClass]="{'is-invalid': submitted && valCustomer.firstname.errors}" />
+                        <div *ngIf="submitted && valCustomer.firstname.errors" class="invalid-feedback">
+                            <span *ngIf="valCustomer.firstname.errors.required">First Name is mandatory</span>
+                            <!--<span *ngIf="valCustomer.firstname.errors.pattern">{{'MENUITEMS.COMMON.AlphabetsOnly'| translate}}</span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="control-label">Last Name</label>
+                        <input class="form-control" placeholder="Last Name" type="text" name="title"
+                            autocomplete="off" formControlName="lastname"
+                            [ngClass]="{'is-invalid': submitted && valCustomer.lastname.errors}" />
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="control-label">Mobilenumber</label>
+                        <input class="form-control" placeholder="Mobilenumber" type="text" name="title"
+                            autocomplete="off" formControlName="mobilenumber"
+                            [ngClass]="{'is-invalid': submitted && valCustomer.mobilenumber.errors}" />
+                        <div *ngIf="submitted && valCustomer.mobilenumber.errors" class="invalid-feedback">
+                            <span *ngIf="valCustomer.mobilenumber.errors.required">Mobilenumber is mandatory</span>
+                           <span *ngIf="valCustomer.mobilenumber.errors.pattern">Enter valid mobile number</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" (click)="Addcustmer()" class="btn btn-success" id="btn-save-event">
+                Add Customer
+            </button>
+        </form>
+    </div>
+</ng-template>
+<!-- Standard Modal -->
+<ng-template #contentPrint role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0"></h5>
+      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+     <form>
+     <app-invoice [purchase]="referencecode"></app-invoice>
+     </form>
+    </div>
+</ng-template>
+
+
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.128)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
+
+

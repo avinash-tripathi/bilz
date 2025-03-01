@@ -1,0 +1,205 @@
+<div class="container-fluid">
+  <app-page-title title="UPLOAD FILE" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+          <form (ngSubmit)="savePurchase()" [formGroup]="formData">
+                <div class="row">
+                  <div class="col-md-4 dropzone">
+                    <div class="mb-3">
+                        <label class="control-label">Customer Name</label>
+                        <input class="form-control" placeholder="Enter Full Name" type="text" name="customername" autocomplete="off" 
+                            formControlName="customername"
+                            [ngClass]="{'is-invalid': submitted && form.customername.errors}" />
+                            <div *ngIf="submitted && form.customername.errors" class="invalid-feedback">
+                            <span *ngIf="form.customername.errors.required">Full Name is required.</span>
+                            </div>
+                    </div>
+                    <div class="row"> 
+                      <div class="col-md-12" > 
+                        <div class="mb-3">
+                            <label class="control-label">Phone</label>
+                            <input class="form-control" placeholder="Enter Phone" type="text" name="phone" autocomplete="off" 
+                                formControlName="phone"
+                                [ngClass]="{'is-invalid': submitted && form.phone.errors}" />
+                                <div *ngIf="submitted && form.phone.errors" class="invalid-feedback">
+                                <span *ngIf="form.phone.errors.required">phone is required.</span>
+                                </div>
+                        </div> 
+                      </div>
+                     
+                     </div>
+                    <div class="row">
+                        <div class="col-md-6" > 
+                            <h6>   Cost: {{_cost}} Rs</h6>
+                        </div>
+                        <div class="col-md-6" > 
+                            <h6>Wallet Balance: {{_currentWalletBalance}} Unit</h6>
+                        </div>
+                        
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-md-6" > 
+                            <h6>Total: {{(_cost )}} Rs</h6>
+                        </div>
+                    </div>
+                  </div>
+                    
+                  <div class="col-md-4" > 
+                  <div class="dropzone" > 
+                    <h5 >Choose the Product's</h5>
+                      <div class="form-check form-check-primary mb-3" *ngFor="let _p of productToFranchiseCategoryMap; let i = index;">
+                      
+                                                  <input name="selectedProduct" 
+                                                  class="form-check-input" type="checkbox" 
+                                                  id="_productid{{i}}"
+                                                  (change)="calculateCost();"
+                                                 [value]="_p.productcode" [(ngModel)]= "_p.status" [ngModelOptions]="{standalone: true}"
+                                                  [ngClass]="{'is-invalid': submitted && _cost<=0}" >
+                                                  <label class="form-check-label" for="formCheckcolor1">
+                                                    {{_p.productname}}
+                                                  </label>
+                              
+                      </div>
+                  </div>
+                  </div>
+                  <div class="col-md-4" *ngIf="_cost>0" >
+                        <dropzone [disabled]="_currentWalletBalance<=0" class="dropzone" 
+                        message="Select Zip file. Please ensure file size not exceed above 5MB." 
+                        name="dropimage" (error)="onUploadError($event)"
+                            (success)="onUploadSuccess($event)"
+                            
+                            [ngClass]="{'is-invalid': submitted }">
+                            
+                         </dropzone>
+                         <div *ngIf="isSizeExceed" style="color:#ff0000">
+                            <span  >{{imagesizeexceed}}</span>
+                                                
+                        </div>
+                         <div >
+                            <button [disabled]="(_currentWalletBalance<=0) || submitted==true" type="button" style="float: right;" class="btn btn-primary"
+                            [ngClass]="{'is-invalid':_currentWalletBalance<=0 }"
+                            (click)="savePurchase();"
+                            >Upload</button>
+                            <div *ngIf="(_currentWalletBalance<=0)" class="invalid-feedback">
+                              <span >Insufficient Unit. Please recharge</span>
+                          </div>
+                         </div>
+                        
+                  </div>
+                </div> 
+                
+            
+            </form> 
+            </div>
+            <!-- end col-->
+          
+          <div class="table-responsive mb-0">
+            <table class="table table-centered table-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th class="align-middle">Customer Name/Phone</th>
+                  <th class="align-middle">Purchase Date</th>
+                  <th class="align-middle">Processed Date</th>
+                  <th class="align-middle">Status</th>
+                  <th class="align-middle">Invoice</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let _purchase of purchaseArray  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize ;let i = index;">
+                    <td>{{_purchase.purchasecode}}</td>
+                    <td>
+                      <p class="mb-1">{{_purchase.customername}}</p>
+                      <p class="mb-0">{{_purchase.customermobile}}</p>
+                    </td>
+                    <td >
+                        {{_purchase.purchasedate | date:'mediumDate'}}
+                          <div>
+                              <a href="{{_ftpPath}}{{_purchase.purchasedateinnumber}}/{{_purchase.zipfilename}}">
+                                      <button class="btn btn-link">  
+                                        <span class="fa fa-download"> {{_purchase.zipfilename}}</span>  
+                                      </button>  
+                                </a>
+                          </div>
+                    </td>
+                    <td *ngIf="_purchase.adminreplydateinnumber==''">Awaiting Result..</td>
+
+                    <td *ngIf="_purchase.adminreplydateinnumber!=''">
+                    <p class="mb-1">{{_purchase.adminreplydate | date:'mediumDate'}}</p>
+                                <div class="me-3">
+                                  <a href="{{_ftpPath}}{{_purchase.adminreplydateinnumber}}/{{_purchase.adminzipfile}}">
+                                  <button class="btn btn-link">  
+                                    <span class="fa fa-download"> {{_purchase.adminzipfile}}</span>  
+                                  </button>  
+                                  </a>
+                                  </div>
+                      
+                    
+                    </td>
+                    <td>
+                    <span *ngIf="_purchase.zipstatus=='processed'" class="badge badge-pill badge-soft-success font-size-11">
+                    {{_purchase.zipstatus }}
+                    </span>
+                    <span *ngIf="_purchase.zipstatus!='processed'" class="badge badge-pill badge-soft-danger font-size-11">
+                    {{_purchase.zipstatus }}
+                    </span>
+                    </td>
+                    <td>
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                        ngbDropdownToggle aria-expanded="false">
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                        <li><a href="javascript: void(0);"
+                        (click)="openModal(content,_purchase,'franchise');"
+                         class="dropdown-item"><i
+                              class="fas fa-receipt text-success me-1"></i>
+                            Self</a></li>
+                        <li><a href="javascript: void(0);"
+                        (click)="openModal(content,_purchase,'customer');"
+                         class="dropdown-item"><i
+                              class="fas fa-receipt text-success me-1"></i>
+                            Customer</a></li>
+                      </ul>
+                      
+                    </div>
+                  </td>
+                   </tr>
+                </tbody>
+            </table>
+          </div>
+          <!-- pagination -->
+          <ngb-pagination 
+         
+          *ngIf="purchaseArray?.length>1"
+          [collectionSize]="purchaseArray?.length" 
+            [(page)]="currentpage"
+            [pageSize]="pageSize"
+
+            class="pagination pagination-rounded justify-content-end mb-2" aria-label="Default pagination">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
+
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0"></h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+   <form>
+   <app-invoice [purchase]="selectedPurchase"></app-invoice>
+   </form>
+  </div>
+</ng-template>

@@ -1,0 +1,494 @@
+<div class="container-fluid">
+  <app-page-title title="BOOKING" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div *ngIf="validlicense=='valid' || validlicense=='warning'" class="text-sm-end">
+                <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                  (click)="openModal(content);reset()">
+                  <i class="mdi mdi-plus me-1"></i> New booking
+                </button>
+              </div>
+            </div>
+            <!-- end col-->
+          </div>
+          <div *ngIf="validlicense=='valid' || validlicense=='warning'" class="table-responsive">
+            <table class="table mb-5">
+              <thead class="table-light">
+                <tr>
+                  <th>Booking No.</th>
+                  <th>Booking Date From</th>
+                  <th>Booking Date To</th>
+                  <th>Customer Name</th>
+                  <th>Package Name</th>
+                  <th>Package Cost</th>
+                  <th>Customer Contact No.</th>
+                  <th>Customer Address</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody card-body ng-star-inserted>
+                <ng-container style="height:max-content"
+                  *ngFor="let _data of bookingData  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                  <tr bx bx-chevron-right font-size (click)="hideShow(i)">
+                    <td class="pointer">{{_data.bookingcode}}</td>
+                    <td>{{_data.bookingdatefrom | date: 'dd MMM, YYYY'}}</td>
+                    <td>{{_data.bookingdateto | date: 'dd MMM, YYYY'}}</td>
+                    <td>{{_data.customername}}</td>
+                    <td>{{_data.packagename}}</td>
+                    <td>{{_data.packageamount}}</td>
+                    <td>{{_data.customercontactno}}</td>
+                    <td>{{_data.customeraddress}}</td>
+                    <td>
+                      <div class="dropdown" ngbDropdown placement="bottom-right">
+                        <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                          ngbDropdownToggle aria-expanded="true">
+                          <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                          <li><a href="javascript: void(0);" (click)="dataToEdit(_data);openModal(content);"
+                              class="dropdown-item"><i class="fas fa-pencil-alt text-success me-1"></i>
+                              Edit</a></li>
+                          <li  *ngIf="_data.checkin!=''"><a href="javascript: void(0);" (click)="openInvoiceModal(invoicecontent,_data);"
+                              class="dropdown-item"><i class="mdi mdi-receipt me-1"></i>
+                              Invoice</a></li>
+                          <li *ngIf="_data.checkin==''"><a href="javascript: void(0);"
+                              (click)="reset();openCheckInModal(contentCheckIn,_data)"
+                              class="dropdown-item text-success"><i class="mdi mdi-receipt me-1"></i>
+                              Check-In</a></li>
+                          <li *ngIf="_data.checkout==''  && _data.checkin!=''"><a href="javascript: void(0);"
+                              (click)="reset();openCheckOutModal(contentCheckOut,_data)"
+                              class="dropdown-item text-warning"><i class="mdi mdi-receipt me-1"></i>
+                              Check-Out</a></li>
+
+                          <li><a href="javascript: void(0);" (click)="deleteBooking(_data);"
+                              class="dropdown-item text-danger">
+                              <i class="mdi mdi-delete me-1"></i>
+                              Delete</a></li>
+                        </ul>
+                      </div>
+                    </td>
+
+                  </tr>
+
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+          <!-- pagination -->
+          <ngb-pagination *ngIf="bookingData?.length>1" [collectionSize]="bookingData?.length" [(page)]="currentpage"
+            [pageSize]="pageSize" class="pagination pagination-rounded justify-content-end mb-2"
+            aria-label="Default pagination">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
+
+<!-- Check-In Modal -->
+<ng-template #contentCheckIn role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0 text-primary">Check-In For: {{updateBooking.customername}}</h5>
+
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="saveCheckIn()" [formGroup]="formDataCheckIn">
+      <div class="row">
+        <div class="col-md-4">
+          <div class=" mb-3">
+            <label class="control-label">Check-In Date</label>
+            <input class="form-control" placeholder="Select Date" type="date" id="example-date-input" name="checkindate"
+              formControlName="checkindate"
+              [ngClass]="{'is-invalid': submittedCheckIn && formCheckIn.checkindate.errors}">
+            <div *ngIf="submittedCheckIn && formCheckIn.checkindate.errors" class="invalid-feedback">
+              <span *ngIf="formCheckIn.checkindate.errors.required">Checkindate is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class=" mb-3">
+            <label class="control-label">Check-In Time</label>
+            <input class="form-control" placeholder="Select Time" type="time" min="00:00" max="23:59"
+              id="example-date-input" name="checkintime" formControlName="checkintime"
+              [ngClass]="{'is-invalid': submittedCheckIn && formCheckIn.checkintime.errors}">
+            <div *ngIf="submittedCheckIn && formCheckIn.checkintime.errors" class="invalid-feedback">
+              <span *ngIf="formCheckIn.checkintime.errors.required">checkintime is required.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-6">
+          <button type="submit" class="btn btn-success" id="btn-save-event">
+            Save
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</ng-template>
+<!-- Check-Out Modal -->
+<ng-template #contentCheckOut role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0 text-primary">Check-Out For: {{updateBooking.customername}}</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="saveCheckOut()" [formGroup]="formDataCheckOut">
+      <div class="row">
+        <div class="col-md-4">
+          <div class=" mb-3">
+            <label class="control-label">Check-Out Date</label>
+            <input class="form-control" placeholder="Select Date" type="date" id="example-date-input"
+              name="checkoutdate" formControlName="checkoutdate"
+              [ngClass]="{'is-invalid': submittedCheckOut && formCheckOut.checkoutdate.errors}">
+            <div *ngIf="submittedCheckOut && formCheckOut.checkoutdate.errors" class="invalid-feedback">
+              <span *ngIf="formCheckOut.checkoutdate.errors.required">Checkoutdate is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class=" mb-3">
+            <label class="control-label">Time</label>
+            <input class="form-control" placeholder="Time" type="time" id="example-date-input" name="checkoutdate"
+              formControlName="checkouttime"
+              [ngClass]="{'is-invalid': submittedCheckOut && formCheckOut.checkouttime.errors}">
+            <div *ngIf="submittedCheckOut && formCheckOut.checkouttime.errors" class="invalid-feedback">
+              <span *ngIf="formCheckOut.checkouttime.errors.required">checkouttime is required.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Payment Mode</label>
+            <select class="form-select" id="paymentmode" formControlName="paymentmode"
+              [ngClass]="{'is-invalid': submittedCheckOut && formCheckOut.paymentmode.errors}">
+              <option [ngValue]="null" selected disabled>Select option</option>
+              <option *ngFor="let _data of paymentmodeArray ;let i = index;" [value]="_data.code">
+                {{_data.value}}</option>
+            </select>
+
+            <div *ngIf="submittedCheckOut && formCheckOut.paymentmode.errors" class="invalid-feedback">
+              <span *ngIf="formCheckOut.paymentmode.errors.required">Payment Mode is required.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <button type="submit" class="btn btn-success" id="btn-save-event">
+            Save
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</ng-template>
+
+
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">{{cardTitle}}</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="savebooking()" [formGroup]="formData">
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-3">
+            <label class="control-label">Customer Name</label>
+            <input class="form-control" placeholder="Enter Customer Name" type="text" name="title" autocomplete="off"
+              formControlName="customername" [ngClass]="{'is-invalid': submitted && form.customername.errors}" />
+            <div *ngIf="submitted && form.customername.errors" class="invalid-feedback">
+              <span *ngIf="form.customername.errors.required">Customer Name is required.</span>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Customer Id</label>
+            <select class="form-select" id="customerid" formControlName="customerid"
+              [ngClass]="{'is-invalid': submitted && form.customerid.errors}">
+              <option [ngValue]="null" selected disabled>Select option</option>
+              <option *ngFor="let _data of customeridArray ;let i = index;">
+                {{_data.value}}</option>
+
+            </select>
+            <div *ngIf="submitted && form.customerid.errors" class="invalid-feedback">
+              <span *ngIf="form.customerid.errors.required">customerid is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Customer Id Value</label>
+            <input class="form-control" placeholder="Enter ID Value" type="text" name="customeridvalue"
+              autocomplete="off" formControlName="customeridvalue"
+              [ngClass]="{'is-invalid': submitted && form.customeridvalue.errors}" />
+            <div *ngIf="submitted && form.customeridvalue.errors" class="invalid-feedback">
+              <span *ngIf="form.customeridvalue.errors.required">Customer ID value is required.</span>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-3">
+            <label class="control-label">Address</label>
+            <input class="form-control" placeholder="Enter address" type="text" autocomplete="off" name="address"
+              formControlName="address" [ngClass]="{'is-invalid': submitted && form.address.errors}" />
+            <div *ngIf="submitted && form.address.errors" class="invalid-feedback">
+              <span *ngIf="form.address.errors.required">Address is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Phone</label>
+            <input class="form-control" placeholder="Enter phone" type="text" name="phone" autocomplete="off"
+              formControlName="phone" [ngClass]="{'is-invalid': submitted && form.phone.errors}" />
+            <div *ngIf="submitted && form.phone.errors" class="invalid-feedback">
+              <span *ngIf="form.phone.errors.required">Phone is required.</span>
+              <span *ngIf="form.phone.errors.pattern">Please, Enter 10 digit Phone Number.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Customer GST No.</label>
+            <input class="form-control" placeholder="Enter GST No." type="text" name="customergstnumber" autocomplete="off"
+              formControlName="customergstnumber"
+              [ngClass]="{'is-invalid': submitted && form.customergstnumber.errors}" />
+            <div *ngIf="submitted && form.customergstnumber.errors" class="invalid-feedback">
+              <span *ngIf="form.customergstnumber.errors.pattern">GST No. is Invalid.</span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Booking from</label>
+            <input [readonly]="!isNewEntry" (change)="getAvailableRooms()"   class="form-control"
+              placeholder="Select Date" type="date" id="example-date-input" name="bookingdatefrom"
+              formControlName="bookingdatefrom" [ngClass]="{'is-invalid': submitted && form.bookingdatefrom.errors}">
+            <div *ngIf="submitted && form.bookingdatefrom.errors" class="invalid-feedback">
+              <span *ngIf="form.bookingdatefrom.errors.required">Bookingdatefrom is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Booking To</label>
+            <input [readonly]="!isNewEntry" (change)="getAvailableRooms()"   class="form-control"
+              placeholder="Select Date" type="date" id="example-date-input" name="bookingdateto"
+              formControlName="bookingdateto" [ngClass]="{'is-invalid': submitted && form.bookingdateto.errors}">
+            <div *ngIf="submitted && form.bookingdateto.errors" class="invalid-feedback">
+              <span *ngIf="form.bookingdateto.errors.required">Bookingdateto is required.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Booking Amount</label>
+            <input class="form-control" placeholder="Booking Amount" type="number" autocomplete="off"
+              name="bookingamount" formControlName="bookingamount"
+              [ngClass]="{'is-invalid': submitted && form.bookingamount.errors}" />
+            <div *ngIf="submitted && form.bookingamount.errors" class="invalid-feedback">
+              <span *ngIf="form.bookingamount.errors.required">Booking Amount is required.</span>
+              <span *ngIf="form.bookingamount.errors.pattern">Please enter valid Booking Amount.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="mb-3">
+            <label class="control-label">Discount%</label>
+            <input class="form-control" placeholder="Discount Percent" type="number" autocomplete="off"
+              name="discountpercent" formControlName="discountpercent"
+              [ngClass]="{'is-invalid': submitted && form.discountpercent.errors}" />
+            <div *ngIf="submitted && form.discountpercent.errors" class="invalid-feedback">
+              <span *ngIf="form.discountpercent.errors.max">Enter valid discount % .</span>
+              <span *ngIf="form.discountpercent.errors.min">Enter valid discount % .</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-4">
+          <div class="mb-3">
+            <label class="control-label">Packages</label>
+            <select class="form-select" id="package" formControlName="package"
+              [ngClass]="{'is-invalid': submitted && form.package.errors}">
+              <option [ngValue]="null" selected disabled>Select option</option>
+              <option *ngFor="let _data of packageArray ;let i = index;" [value]="_data.packagecode">
+                {{_data.packagename}}</option>
+            </select>
+
+            <div *ngIf="submitted && form.package.errors" class="invalid-feedback">
+              <span *ngIf="form.package.errors.required">Package is required.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-2">
+          <div class="mb-3">
+            <label class="control-label">No of Days</label>
+            <input class="form-control" placeholder="No of Days" type="number" autocomplete="off" name="noofdays"
+              formControlName="noofdays" [ngClass]="{'is-invalid': submitted && form.noofdays.errors}" />
+            <div *ngIf="submitted && form.noofdays.errors" class="invalid-feedback">
+              <span *ngIf="form.noofdays.errors.min">Please enter valid No of Days.</span>
+              <span *ngIf="form.noofdays.errors.required">Please enter No of Days.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-3">
+            <label class="control-label">Company Name</label>
+            <input class="form-control" placeholder="Company Name" type="text" autocomplete="off" name="companyname"
+              formControlName="companyname" [ngClass]="{'is-invalid': submitted && form.companyname.errors}" />
+
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="col-12" *ngIf="form.package.value?.length>0">
+          <div *ngFor="let pack of packageArray | filter:form.package.value; let i=index">
+          <div class="mb-4">
+            <label class="control-label text-warning">Package Detail</label>
+            <div class="form-control">
+              <div class="table-responsive">
+                <table class="table table-sm table-hover table-bordered">
+                  <thead>
+                    <tr class="tableRow text-primary">
+                      <th style="width: 100px;">Feature Name</th>
+                      <th style="width: 100px;">Feature Rate</th>
+                      <th style="width: 100px;">Quantity</th>
+                      <th style="width: 100px;">Tax Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                      <tr class="tableRow" *ngFor="let chk of pack.packagefeatures; let ii=index">
+                        <td>
+                          <input [disabled]="!isNewEntry" placement="top" ngbTooltip="{{chk.amenityrate}}"
+                          style="margin-left:5px"
+                          class="form-check-input" type="checkbox" (change)="onChange($event)"
+                          [checked]="chk.status"
+                          [value]="chk.featurecode">
+                        {{chk.featurename}}
+                        </td>
+
+                        <td><input  [disabled]="!chk.status"
+                          class="form-control" placeholder="Room Rate" type="number" autocomplete="off"
+                          [(ngModel)]="chk.amenityrate" [ngModelOptions]="{standalone: true}"
+                            [ngClass]="{'is-invalid': submitted && chk.amenityrate<0}" />
+                          <div *ngIf="submitted && chk.amenityrate<0" class="invalid-feedback">
+                            <span *ngIf="chk.amenityrate<0">Enter Rate.</span>
+                            
+                          </div></td> 
+                          <td><input  [disabled]="!chk.status"
+                            class="form-control" placeholder="Room Rate" type="number" autocomplete="off"
+                            [(ngModel)]="chk.quantity" [ngModelOptions]="{standalone: true}"
+                              [ngClass]="{'is-invalid': submitted && chk.quantity<0}" />
+                            <div *ngIf="submitted && chk.quantity<0" class="invalid-feedback">
+                              <span *ngIf="chk.quantity<0">Enter valid quantity.</span>
+                            </div></td> 
+                         
+                          <td>{{chk.tax}}</td>
+
+                      </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="col-6">
+          <button type="submit" class="btn btn-success" id="btn-save-event">
+            Save
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</ng-template>
+
+<!-- Standard Modal For Invoice -->
+<ng-template #invoicecontent role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Invoice</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <app-bookinginvoice [purchase]="_selectedBooking"></app-bookinginvoice>
+  </div>
+</ng-template>
+<ng-template #contentLicense let-modal>
+  <div class="modal-header border-bottom-0">
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"> </button>
+  </div>
+  <div class="modal-body">
+      <div class="text-center mb-4">
+          <div class="avatar-md mx-auto mb-4">
+              <div class="avatar-title bg-light rounded-circle text-primary h1">
+                  <i class="mdi mdi-email-open"></i>
+              </div>
+          </div>
+
+
+          <div class="row justify-content-center">
+              <div class="col-xl-8">
+                  <h4 class="text-danger">Your Bill Is Pending!</h4>
+                  <p class="text-muted font-size-12 mb-4">Dear Subscriber, Your subscription is going to expire soon. Please pay your pending bills to avail uninterrupted services.
+                  </p>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.128)" size="medium" color="#fff" type="square-jelly-box" [fullScreen]="true">
+  <p style="color: white"> Loading... </p>
+</ngx-spinner>

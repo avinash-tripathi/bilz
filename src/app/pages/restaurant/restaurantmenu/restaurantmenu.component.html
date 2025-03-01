@@ -1,0 +1,140 @@
+<div class="container-fluid">
+    <app-page-title title="RESTAURANT MENU" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-sm-4">
+                            <div class="search-box me-2 mb-2 d-inline-block">
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" placeholder="Search..."
+                                        [(ngModel)]="term" />
+                                    <i class="bx bx-search-alt search-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="text-sm-end">
+                                <button type="button" class="btn btn-success btn-rounded mb-2 mr-2"
+                                    (click)="openModal(content)">
+                                    <i class="mdi mdi-plus me-1"></i> New Menu
+                                </button>
+                            </div>
+                        </div>
+                        <!-- end col-->
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap">
+                                <thead>
+                                    <tr>
+                                        <!-- <th>#</th> -->
+                                        <th>Code</th>
+                                        <th>Menu Name</th>
+                                        
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let _franchisecategory of menuArray  | filter:term ;let i = index;">
+                                        <td>{{_franchisecategory.restaurantmenucode}}</td>
+                                        <td>
+                                            <p class="mb-1">{{_franchisecategory.restaurantmenuname}}</p>
+                                        </td>
+                                        <td>
+                                            <div ngbDropdown placement="bottom-left">
+                                                <i class="mdi mdi-dots-vertical dropdown-toggle" ngbDropdownToggle
+                                                    data-toggle="dropdown" aria-expanded="true"></i>
+                                                <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                                                    <!-- <a class="dropdown-item" href="javascript: void(0);"><i class="mdi mdi-plus"></i>Add</a> -->
+                                                    <a class="dropdown-item" (click)="dataToEdit(i);openModal(content);"
+                                                        href="javascript: void(0);"><i
+                                                            class="mdi mdi-account-edit"></i>Edit</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title mt-0">{{cardTitle}}</h4>
+        <button type="button" class="btn-close" aria-hidden="true"
+            (click)="modal.dismiss('Cross click');resetData();"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="saveRestaurantMenu()" [formGroup]="formData">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Menu Category</label>
+                                <select class="form-select" id="restaurantmenucategorycode" formControlName="restaurantmenucategorycode"
+                                    [ngClass]="{'is-invalid': submitted && form.restaurantmenucategorycode.errors}">
+                                    <option [ngValue]="null" selected disabled>Select option</option>
+                                    <option *ngFor="let _data of menuCategoryArray" [value]="_data.restaurantmenucategorycode">
+                                        {{ _data.restaurantmenucategoryname }}
+                                    </option>
+    
+                                </select>
+                                <div *ngIf="submitted && form.restaurantmenucategorycode.errors" class="invalid-feedback">
+                                <span *ngIf="form.restaurantmenucategorycode.errors.required">Category is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Menu Name</label>
+                                <input class="form-control" placeholder="Enter Menu Name" type="text"
+                                    name="restaurantmenuname" autocomplete="off" formControlName="restaurantmenuname"
+                                    [ngClass]="{'is-invalid': submitted && form.restaurantmenuname.errors}" />
+                                <div *ngIf="submitted && form.restaurantmenuname.errors" class="invalid-feedback">
+                                    <span *ngIf="form.restaurantmenuname.errors.required">Menu name is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Menu Price</label>
+                                <input type="number" class="form-control" placeholder="Enter Menu Price" 
+                                    name="menuprice" autocomplete="off" formControlName="menuprice"
+                                    [ngClass]="{'is-invalid': submitted && form.menuprice.errors}" />
+                                <div *ngIf="submitted && form.menuprice.errors" class="invalid-feedback">
+                                    <span *ngIf="form.menuprice.errors.required">Menu name is required.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="control-label">Menu Description</label>
+                                <input class="form-control" placeholder="Enter Menu Description" type="text"
+                                    name="restaurantmenudescription" autocomplete="off" formControlName="restaurantmenudescription"
+                                    [ngClass]="{'is-invalid': submitted && form.restaurantmenudescription.errors}" />
+                                <div *ngIf="submitted && form.restaurantmenudescription.errors" class="invalid-feedback">
+                                    <span *ngIf="form.restaurantmenudescription.errors.required">Menu is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                    <button type="button" class="btn btn-success  mb-4 mr-4" (click)="saveRestaurantMenu();">
+                        {{valButtonText}}
+                    </button>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>

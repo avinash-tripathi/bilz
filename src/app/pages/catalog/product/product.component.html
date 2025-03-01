@@ -1,0 +1,134 @@
+<div class="container-fluid">
+  <app-page-title title="PRODUCT" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end">
+                <button type="button" class="btn btn-success btn-rounded mb-2 mr-2" (click)="openModal(content)">
+                  <i class="mdi mdi-plus me-1"></i> New Product
+                </button>
+              </div>
+            </div>
+            <!-- end col-->
+            <div class="table-responsive">
+              <table class="table align-middle table-nowrap">
+                <thead>
+                  <tr>
+                    <!-- <th>#</th> -->
+                    <th>Code</th>
+                    <th>Name</th>
+                    <!-- <th>Cost to Customer</th>
+                    <th>Cost to Franchise</th> -->
+                    <th>Date Created</th>
+                    
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let _product of productData  | filter:term ;let i = index;">
+                    <td>{{_product.productcode}}</td>
+                    <td>
+                      <p class="mb-1">{{_product.productname}}</p>
+                    </td>
+                    <!-- <td>
+                      <p class="mb-1">{{_product.costtocustomer}}</p>
+                    </td>
+                    <td>
+                      <p class="mb-1">{{_product.costtofranchise}}</p>
+                    </td> -->
+                    <td>{{_product.punchedon | date:'mediumDate'}}</td>
+                    
+                    <td>
+                      <div ngbDropdown placement="bottom-left">
+                        <i class="mdi mdi-dots-vertical dropdown-toggle" ngbDropdownToggle data-toggle="dropdown"
+                          aria-expanded="true"></i>
+                        <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                          <!-- <a class="dropdown-item" href="javascript: void(0);"><i class="mdi mdi-plus"></i>Add</a> -->
+                          <a class="dropdown-item" (click)="dataToEdit(i);openModal(content);"
+                            href="javascript: void(0);"><i class="mdi mdi-account-edit"></i>Edit</a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title mt-0">{{cardTitle}}</h4>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click');resetData();"></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="saveProduct()" [formGroup]="formData">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+              <div class="col-12">
+                  <div class="mb-3">
+                    <label class="control-label">Product Code</label>
+                    <input [readonly]="!isNewEntry" class="form-control" placeholder="Enter Product Code" type="text" name="productcode" autocomplete="off"
+                      formControlName="productcode" [ngClass]="{'is-invalid': submitted && form.productcode.errors}" />
+                    <div *ngIf="submitted && form.productcode.errors" class="invalid-feedback">
+                      <span *ngIf="form.productcode.errors.required">Productcode is required.</span>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="control-label">Product Name</label>
+                    <input class="form-control" placeholder="Enter Product Name" type="text" name="productname" autocomplete="off"
+                      formControlName="productname" [ngClass]="{'is-invalid': submitted && form.productname.errors}" />
+                      <div *ngIf="submitted && form.productname.errors" class="invalid-feedback">
+                        <span *ngIf="form.productname.errors.required">Product is required.</span>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="hide==false">
+              <div class="col-12">
+                  <div class="mb-3">
+                    <label class="control-label">Cost to Customer</label>
+                    <input  class="form-control" placeholder="Cost to Customer" type="number" name="costtocustomer" autocomplete="off"
+                      formControlName="costtocustomer" [ngClass]="{'is-invalid': submitted && form.costtocustomer.errors}" />
+                    <div *ngIf="submitted && form.costtocustomer.errors" class="invalid-feedback">
+                      <span *ngIf="form.costtocustomer.errors.required">cost to customer is required.</span>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="control-label">Cost to franchise</label>
+                    <input class="form-control" placeholder="Enter Cost to franchise" type="number" name="costtofranchise" autocomplete="off"
+                      formControlName="costtofranchise" [ngClass]="{'is-invalid': submitted && form.costtofranchise.errors}" />
+                      <div *ngIf="submitted && form.costtofranchise.errors" class="invalid-feedback">
+                        <span *ngIf="form.costtofranchise.errors.required">Cost to franchise is required.</span>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+              <button type="button" class="btn btn-success  mb-4 mr-4" (click)="saveProduct();">
+               {{valButtonText}}
+              </button>
+           
+          
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

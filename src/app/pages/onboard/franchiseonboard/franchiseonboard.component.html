@@ -1,0 +1,297 @@
+<div class="container-fluid">
+  <app-page-title title="ONBOARD FRANCHISE" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="term" />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end">
+                <button type="button" class="btn btn-success btn-rounded mb-2 mr-2" (click)="openModal(content);reset()">
+                  <i class="mdi mdi-plus me-1"></i> New Franchise
+                </button>
+              </div>
+            </div>
+            <!-- end col-->
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Phone / Email</th>
+                  <th>Address</th>
+                  
+                  <th>Joining Date</th>
+                  <th>Introducer</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let _data of franchiseData  | filter:term| slice: (currentpage-1)*pageSize:(currentpage-1)*pageSize+pageSize  ;let i = index;">
+                 
+                  <td>{{_data.franchisecode}}</td>
+                  <td>{{_data.franchisename}}</td>
+                  <td>{{_data.franchisecategory}}</td>
+                  <td>
+                    <p class="mb-1">{{_data.phone}}</p>
+                    <p class="mb-0">{{_data.email}}</p>
+                  </td>
+
+                  <td>{{_data.address}}</td>
+                  <td>{{_data.puncheddate | date: 'dd MMM, YYYY'}}</td>
+                  <td>
+                    <p class="mb-1">{{_data.introducercode}}</p>
+                    <p class="mb-0">{{_data.introducername}}</p>
+                  </td>
+                  <td>
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a href="javascript: void(0);" class="dropdown-toggle card-drop" data-toggle="dropdown"
+                        ngbDropdownToggle aria-expanded="false">
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                        <li><a href="javascript: void(0);"
+                        (click)="dataToEdit(_data);openModal(content);"
+                         class="dropdown-item"><i
+                              class="fas fa-pencil-alt text-success me-1"></i>
+                            Edit</a></li>
+                            <li><a href="javascript: void(0);"
+                              (click)="markFranchiseToRecharge(_data);openWalletModal(walletcontent);"
+                               class="dropdown-item"><i
+                               class="mdi mdi-wallet me-1"></i>
+                                  Recharge Wallet</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- pagination -->
+          <ngb-pagination
+          *ngIf="franchiseData?.length>1"
+          [collectionSize]="franchiseData?.length" 
+            [(page)]="currentpage"
+            [pageSize]="pageSize"
+            class="pagination pagination-rounded justify-content-end mb-2" aria-label="Default pagination">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
+<!-- Standard Modal For Wallet Recharge -->
+<ng-template #walletcontent role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Recharge wallet</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+   
+  </div>  
+     <div class="modal-body">
+      <app-walletrecharge [walletFranchise]="walletFranchise"></app-walletrecharge>
+    
+  </div>
+
+</ng-template>  
+<!-- Standard Modal -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">{{cardTitle}}</h5>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
+   
+  </div>
+  <div class="modal-body">
+   <form (ngSubmit)="saveFranchise()" [formGroup]="formData">
+   <div class="row">
+      <div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Full Name</label>
+          <input class="form-control" placeholder="Enter Full Name" type="text" name="title" autocomplete="off" 
+          formControlName="franchisename"
+              [ngClass]="{'is-invalid': submitted && form.franchisename.errors}" />
+            <div *ngIf="submitted && form.franchisename.errors" class="invalid-feedback">
+              <span *ngIf="form.franchisename.errors.required">Full Name is required.</span>
+              
+            </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="mb-3">
+          <label class="control-label">Franchise Category</label>
+          <select class="form-control" id="franchisecategory" formControlName="franchisecategory"
+          [ngClass]="{'is-invalid': submitted && form.franchisecategory.errors}">
+                                <option *ngFor="let _data of franchiseCategoryArray ;let i = index;">
+                                {{_data.mapcode}}</option>
+                               
+          </select>
+          <div *ngIf="submitted && form.franchisecategory.errors" class="invalid-feedback">
+              <span *ngIf="form.franchisecategory.errors.required">Franchisecategory is required.</span>
+            </div>   
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="mb-3">
+          <label class="control-label">GST Number</label>
+          <input class="form-control" placeholder="Enter GST Number" type="text" name="gstnumber" autocomplete="off" 
+              formControlName="gstnumber"
+              [ngClass]="{'is-invalid': submitted && form.gstnumber.errors}" />
+              <div *ngIf="submitted && form.gstnumber.errors" class="invalid-feedback">
+              <span *ngIf="form.gstnumber.errors.pattern">Invalid GST Number.</span>
+              </div>
+      </div>
+      </div>
+
+
+    </div>
+  
+  <div class="row">
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Email</label>
+          <input [readonly]="userData['role']=='franchise' && isNewEntry==false" class="form-control" placeholder="Enter email" type="text" name="email" 
+          autocomplete="off" formControlName="email"
+              [ngClass]="{'is-invalid': submitted && form.email.errors}" />
+              <div *ngIf="submitted && form.email.errors" class="invalid-feedback">
+                <span *ngIf="form.email.errors.required">Email is required.</span>
+                <span *ngIf="form.email.errors.pattern">This value should be a valid email.</span>
+              </div>
+        </div>
+		</div>
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Phone</label>
+          <input [readonly]="userData['role']=='franchise' && isNewEntry==false" class="form-control" placeholder="Enter phone" type="text" name="phone" 
+          autocomplete="off" formControlName="phone" 
+              [ngClass]="{'is-invalid': submitted && form.phone.errors}" />
+            <div *ngIf="submitted && form.phone.errors" class="invalid-feedback">
+              <span *ngIf="form.phone.errors.required">Phone is required.</span>
+              <span *ngIf="form.phone.errors.pattern">Please, Enter 10 digit Phone Number.</span>
+            </div>
+        </div>
+		</div>		
+  </div>
+  <div class="row">
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Address</label>
+          <input class="form-control" placeholder="Enter address" type="text" 
+          autocomplete="off" name="address" formControlName="address"
+              [ngClass]="{'is-invalid': submitted && form.address.errors}" />
+            <div *ngIf="submitted && form.address.errors" class="invalid-feedback">
+              <span *ngIf="form.address.errors.required">Address is required.</span>
+            </div>
+        </div>
+		</div>
+		<div class="col-3">
+    <div class="mb-3">
+          <label class="control-label">State</label>
+          <ng-select   id="state" formControlName="state"
+            [items]="stateArray" bindLabel="state"
+            (change)="onStateChange($event.statecode)"
+            [ngClass]="{'is-invalid': submitted && form.state.errors}">
+          </ng-select>
+            <div *ngIf="submitted && form.state.errors" class="invalid-feedback">
+              <span *ngIf="form.state.errors.required">state is required.</span>
+               <span *ngIf="form.state.errors.pattern">Only Alphabets are allowed in Name.</span>
+            </div>
+        </div>
+
+        
+		</div>
+		<div class="col-3">
+        <div class="mb-3">
+          <label class="control-label">City</label>
+          <ng-select  id="city" formControlName="city"
+            [items]="cityArray" bindLabel="city"
+            [ngClass]="{'is-invalid': submitted && form.city.errors}">
+          </ng-select>
+            <div *ngIf="submitted && form.city.errors" class="invalid-feedback">
+              <span *ngIf="form.city.errors.required">city is required.</span>
+              <span *ngIf="form.city.errors.pattern">Only Alphabets are allowed in Name.</span>
+            </div>
+        </div>
+		</div>
+      </div>
+  
+  <div class="row">
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Bank Name</label>
+          <input class="form-control" placeholder="Enter Bank Name" type="text" 
+          name="bankname" autocomplete="off" formControlName="bankname"
+              [ngClass]="{'is-invalid': submitted && form.bankname.errors}" />
+              
+        </div>
+		</div>
+    <div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Account Holder Name</label>
+          <input class="form-control" placeholder="Enter Account Holder Name" type="text" 
+          name="accountholdername" autocomplete="off" 
+          formControlName="accountholdername"
+              [ngClass]="{'is-invalid': submitted && form.accountholdername.errors}" />
+            
+        </div>
+		</div>
+
+				
+  </div>
+  <div class="row">
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Account Number</label>
+          <input class="form-control" placeholder="Enter A/C Number" type="text" 
+          name="accountnumber" autocomplete="off" formControlName="accountnumber"
+              [ngClass]="{'is-invalid': submitted && form.accountnumber.errors}" />
+            
+        </div>
+		</div>
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">IFSC Code</label>
+          <input class="form-control" placeholder="Enter IFSC Code" type="text" 
+          name="ifsccode" autocomplete="off" formControlName="ifsccode"
+              [ngClass]="{'is-invalid': submitted && form.ifsccode.errors}" />
+            
+        </div>
+		</div>		
+  </div>
+  <div class="row">
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Bank Address</label>
+          <input class="form-control" placeholder="Enter Bank Address" type="text" 
+          name="bankaddress" autocomplete="off" formControlName="bankaddress"
+              [ngClass]="{'is-invalid': submitted && form.bankaddress.errors}" />
+            
+        </div>
+		</div>
+		<div class="col-6">
+        <div class="mb-3">
+          <label class="control-label">Branch</label>
+          <input class="form-control" placeholder="Enter Branch" type="text" 
+          name="bankbranch" autocomplete="off" formControlName="bankbranch"
+              [ngClass]="{'is-invalid': submitted && form.bankbranch.errors}" />
+            
+        </div>
+		</div>		
+  </div>
+     <button type="submit" class="btn btn-success" id="btn-save-event">
+      Save
+    </button>
+   </form>
+  </div>
+</ng-template>
