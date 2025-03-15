@@ -10,6 +10,7 @@ import { first } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { CommonService } from 'src/app/core/services/common.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-login',
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
 
   // set the currenr year
   year: number = new Date().getFullYear();
+  passwordVisible: boolean = false;
 
   // tslint:disable-next-line: max-line-length
   constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router,
@@ -55,6 +57,9 @@ export class LoginComponent implements OnInit {
   /**
    * Form submit
    */
+   togglePassword() {
+    this.passwordVisible = !this.passwordVisible;
+  }
   onSubmit() {
     this.submitted = true;
 
@@ -63,7 +68,9 @@ export class LoginComponent implements OnInit {
       return;
     } else {
       this.spinner.show();
-        this.authFackservice.login(this.f.email.value, this.f.password.value)
+        //var hashOfPassword = CryptoJS.SHA256(this.f.password.value).toString(CryptoJS.enc.Hex);
+        var hashOfPassword =  CryptoJS.SHA256(this.f.password.value).toString(CryptoJS.enc.Hex);
+        this.authFackservice.login(this.f.email.value, hashOfPassword)
           .pipe(first())
           .subscribe(
             data => {

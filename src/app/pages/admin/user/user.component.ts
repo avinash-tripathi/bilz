@@ -24,7 +24,7 @@ export class UserComponent implements OnInit {
   cardTitle = "New Role";
   valButtonText = "New Role";
   isNewEntry = true;
-  userData: [];
+  userData: any;
   currentpage: number = 1;
   pageSize: number = 20;
   filter
@@ -58,7 +58,7 @@ export class UserComponent implements OnInit {
       validator: this.ConfirmedValidator('password', 'confirmpassword')
     });
     this.roles();
-    this._fetchData();
+   
 
   }
   ConfirmedValidator(controlName: string, matchingControlName: string) {
@@ -104,8 +104,16 @@ export class UserComponent implements OnInit {
         .subscribe(data => {
           this.spinner.hide();
           this.roleArray = null;
-          this.roleArray = data;
+          this.roleArray = null;
+
+          if (this.userData.role.toUpperCase() === 'MANAGER') {
+            this.roleArray = data.filter(val => val.rolename !== "SuperAdmin");
+          } else {
+            this.roleArray = data;
+          }
+          
         })
+        this._fetchData();
     }
     catch (error) {
       this.spinner.hide();
@@ -123,7 +131,13 @@ export class UserComponent implements OnInit {
         .subscribe(data => {
           this.spinner.hide();
           this.usersData = null;
-          this.usersData = data;
+          if (this.roleArray && Array.isArray(this.roleArray)) {
+            this.usersData = data.filter(user => 
+              this.roleArray.some(role => role.rolecode === user.rolecode)
+            );
+          } else {
+            this.usersData = [];
+          }
         })
     }
     catch (error) {
